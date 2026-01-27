@@ -1,0 +1,566 @@
+import streamlit as st
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+import bcrypt
+
+# ---------------- PAGE CONFIG ----------------
+st.set_page_config(page_title="Smart Teacher Assistant", layout="wide")
+
+# ---------------- UI STYLING ----------------
+st.markdown("""
+<style>
+
+.main {
+    background: linear-gradient(to right, #eef2f3, #ffffff);
+}
+
+section[data-testid="stSidebar"] {
+    background: linear-gradient(#1f4037, #99f2c8);
+    color: white;
+}
+
+h1 {
+    color: #1f4037;
+    text-align: center;
+    font-weight: bold;
+}
+
+h2, h3 {
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+.stButton > button {
+    background-color: #1f4037;
+    color: white;
+    border-radius: 8px;
+    height: 45px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.stButton > button:hover {
+    background-color: #145a32;
+}
+
+input {
+    border-radius: 6px !important;
+}
+
+[data-testid="stDataFrame"] {
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
+
+# ---------------- FILES ----------------
+USER_FILE = "users.csv"
+ATT_FILE = "attendance.csv"
+MARKS_FILE = "marks.csv"
+ASSIGN_FILE = "assignments.csv"
+
+
+# ---------------- CREATE FILES ----------------
+if not os.path.exists(USER_FILE):
+    pd.DataFrame(columns=["Username","Password"]).to_csv(USER_FILE,index=False)
+
+if not os.path.exists(ATT_FILE):
+    pd.DataFrame(columns=["Username","Roll","Name","Date","Status"]).to_csv(ATT_FILE,index=False)
+
+if not os.path.exists(MARKS_FILE):
+    pd.DataFrame(columns=["Username","Roll","Name","Subject","Marks"]).to_csv(MARKS_FILE,index=False)
+
+if not os.path.exists(ASSIGN_FILE):
+    pd.DataFrame(columns=["Username","Roll","Name","Assignment","File"]).to_csv(ASSIGN_FILE,index=False)
+
+
+# ---------------- PASSWORD ----------------
+def hash_pass(p):
+    return bcrypt.hashpw(p.encode(),bcrypt.gensalt()).decode()
+
+def check_pass(p,h):
+    return bcrypt.checkpw(p.encode(),h.encode())
+
+
+# ---------------- SIGNUP ----------------
+def signup():
+
+    st.markdown('<div class="card">',unsafe_allow_html=True)
+    st.subheader("📝 Create Account")
+
+    user = st.text_input("Username", key="signup_user")
+    pwd = st.text_input("Password", type="password", key="signup_pwd")
+    cpwd = st.text_input("Confirm Password", type="password", key="signup_cpwd")
+
+    if st.button("Signup", key="signup_btn"):
+
+        if pwd != cpwd:
+            st.error("Passwords not match")
+            return
+
+        df = pd.read_csv(USER_FILE)
+
+        if user in df["Username"].values:
+            st.warning("User Exists")
+            return
+
+        df.loc[len(df)] = [user,hash_pass(pwd)]
+        df.to_csv(USER_FILE,index=False)
+
+        st.success("Account Created! Login Now")
+
+    st.markdown('</div>',unsafe_allow_html=True)
+# ---------------- LOGIN ----------------
+def login():
+
+    st.markdown('<div class="card">',unsafe_allow_html=True)
+    st.subheader("🔐 Login")
+
+    user = st.text_input("Username", key="login_user")
+    pwd = st.text_input("Password", type="password", key="login_pwd")
+
+    if st.button("Login", key="login_btn"):
+
+        df = pd.read_csv(USER_FILE)
+
+        if user not in df["Username"].values:
+            st.error("User Not Found")
+            return
+
+        h = df[df["Username"]==user]["Password"].values[0]
+
+        if check_pass(pwd,h):
+
+            st.session_state.login = True
+            st.session_state.user = user
+
+            st.success("Login Success")
+            st.rerun()
+
+        else:
+            st.error("Wrong Password")
+
+    st.markdown('</div>',unsafe_allow_html=True)
+
+# ---------------- ATTENDANCE ----------------
+def attendance():
+
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("📋 Day-Wise Attendance System")
+
+    user = st.session_state.user
+
+    # Select date
+    selected_date = st.date_input("Select Attendance Date", key="att_date")
+
+    st.subheader(f"📅 Attendance for: {selected_date}")
+
+    roll = st.text_input("Roll No", key="att_roll")
+    name = st.text_input("Student Name", key="att_name")
+
+    status = st.selectbox("Status", ["Present", "Absent"], key="att_status")
+
+    # Save attendance
+    if st.button("Save Attendance", key="att_btn"):
+
+        df = pd.read_csv(ATT_FILE)
+
+        # Check duplicate for same user + student + date
+        already = df[
+            (df["Username"] == user) &
+            (df["Roll"] == roll) &
+            (df["Date"] == str(selected_date))
+        ]
+
+        if len(already) > 0:
+            st.warning("Attendance already marked for this student today!")
+            return
+
+        # Save record
+        df.loc[len(df)] = [user, roll, name, selected_date, status]
+        df.to_csv(ATT_FILE, index=False)
+
+        st.success("Attendance Saved Successfully")
+
+    # ---------------- VIEW BY DATE ----------------
+    st.subheader("📂 View Attendance (Day Wise)")
+
+    view_date = st.date_input("Choose Date to View", key="att_view_date")
+
+    df = pd.read_csv(ATT_FILE)
+
+    # Filter by user and date
+    day_data = df[
+        (df["Username"] == user) &
+        (df["Date"] == str(view_date))
+    ]
+
+    if len(day_data) == 0:
+        st.info("No attendance records for this date")
+    else:
+        st.dataframe(day_data)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ---------------- ASSIGNMENTS ----------------
+def assignments():
+
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("📝 Assignments")
+
+    user = st.session_state.user
+
+    # ---------------- SUBMIT SECTION ----------------
+    st.subheader("📤 Submit Assignment")
+
+    roll = st.text_input("Roll No", key="ass_roll")
+    name = st.text_input("Student Name", key="ass_name")
+    ass = st.text_input("Assignment Name", key="ass_title")
+
+    file = st.file_uploader(
+        "Upload File (Optional - Drag & Drop Supported)",
+        key="ass_file"
+    )
+
+    if st.button("Submit Assignment", key="ass_btn"):
+
+        df = pd.read_csv(ASSIGN_FILE)
+
+        # Optional file
+        if file is None:
+            filename = "No File"
+        else:
+            filename = file.name
+
+        df.loc[len(df)] = [user, roll, name, ass, filename]
+        df.to_csv(ASSIGN_FILE, index=False)
+
+        st.success("Assignment Submitted Successfully")
+
+    st.divider()
+
+    # ---------------- MY SUBMISSIONS ----------------
+    st.subheader("📂 My Submissions")
+
+    df = pd.read_csv(ASSIGN_FILE)
+    mydata = df[df["Username"] == user]
+
+    if len(mydata) == 0:
+        st.info("No submissions yet")
+    else:
+        st.dataframe(mydata)
+
+    st.divider()
+
+    # ---------------- SEARCH BY ROLL ----------------
+    st.subheader("🔍 View Completed Assignments (By Roll No)")
+
+    search_roll = st.text_input("Enter Roll No", key="ass_search")
+
+    if search_roll.strip() != "":
+
+        result = mydata[mydata["Roll"] == search_roll]
+
+        if len(result) == 0:
+            st.warning("No assignments found for this Roll No")
+        else:
+            st.success(f"Found {len(result)} assignment(s)")
+            st.dataframe(result)
+
+    else:
+        st.info("Enter Roll No to search student assignments")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+# ---------------- MARKS ----------------
+def marks():
+
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("📊 Student Marks Management")
+
+    user = st.session_state.user
+
+    # ---------------- ENTER MARKS ----------------
+    st.subheader("📝 Enter / Update Marks")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        roll = st.text_input("Roll No", key="marks_roll")
+        name = st.text_input("Student Name", key="marks_name")
+
+    with col2:
+        subject = st.text_input("Subject", key="marks_subject")
+        mark = st.number_input("Marks (0 - 100)", 0, 100, key="marks_value")
+
+    if st.button("💾 Save Marks", key="marks_save"):
+
+        df = pd.read_csv(MARKS_FILE)
+
+        # Check if already exists (Update marks)
+        existing = df[
+            (df["Username"] == user) &
+            (df["Roll"] == roll) &
+            (df["Subject"] == subject)
+        ]
+
+        if len(existing) > 0:
+            df.loc[existing.index, "Marks"] = mark
+            st.success("Marks Updated Successfully")
+        else:
+            df.loc[len(df)] = [user, roll, name, subject, mark]
+            st.success("Marks Saved Successfully")
+
+        df.to_csv(MARKS_FILE, index=False)
+
+    st.divider()
+
+    # ---------------- STUDENT SEARCH ----------------
+    st.subheader("🔍 View Student Marks")
+
+    search_roll = st.text_input("Enter Roll No to Search", key="marks_search")
+
+    df = pd.read_csv(MARKS_FILE)
+    mydata = df[df["Username"] == user]
+
+    if search_roll.strip() != "":
+
+        student_data = mydata[mydata["Roll"] == search_roll]
+
+        if len(student_data) == 0:
+            st.warning("No records found for this student")
+        else:
+            st.dataframe(student_data)
+
+            avg = student_data["Marks"].mean()
+            st.info(f"📌 Average Marks: {round(avg,2)}")
+
+    else:
+        st.info("Enter Roll No to view marks")
+
+    st.divider()
+
+    # ---------------- ALL RECORDS ----------------
+    st.subheader("📋 My Marks Records")
+
+    if len(mydata) == 0:
+        st.warning("No marks data available")
+    else:
+        st.dataframe(mydata)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+# ---------------- ANALYTICS ----------------
+def analytics():
+
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("📈 Academic Performance Analytics")
+
+    user = st.session_state.user
+
+    # Load data
+    df = pd.read_csv(MARKS_FILE)
+    df = df[df["Username"] == user]
+
+    if len(df) == 0:
+        st.warning("No marks data available for analysis")
+        st.markdown('</div>', unsafe_allow_html=True)
+        return
+
+    # ---------------- SUMMARY METRICS ----------------
+    st.subheader("📊 Performance Overview")
+
+    class_avg = round(df["Marks"].mean(), 2)
+    highest = df["Marks"].max()
+    lowest = df["Marks"].min()
+    total_students = df["Roll"].nunique()
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    col1.metric("📌 Class Average", class_avg)
+    col2.metric("🏆 Highest Marks", highest)
+    col3.metric("⚠️ Lowest Marks", lowest)
+    col4.metric("👨‍🎓 Students", total_students)
+
+    st.divider()
+
+    # ---------------- SUBJECT FILTER ----------------
+    st.subheader("🎯 Subject-wise Analysis")
+
+    subjects = ["All"] + list(df["Subject"].unique())
+
+    selected_sub = st.selectbox(
+        "Select Subject",
+        subjects,
+        key="ana_subject"
+    )
+
+    if selected_sub != "All":
+        data = df[df["Subject"] == selected_sub]
+    else:
+        data = df.copy()
+
+    st.write(f"Showing data for: **{selected_sub}**")
+
+    st.dataframe(data)
+
+    st.divider()
+
+    # ---------------- TOP & WEAK STUDENTS ----------------
+    st.subheader("🏅 Student Performance Ranking")
+
+    avg_student = data.groupby(["Roll", "Name"])["Marks"].mean().reset_index()
+
+    top5 = avg_student.sort_values("Marks", ascending=False).head(5)
+    weak5 = avg_student.sort_values("Marks").head(5)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.write("🌟 Top Performers")
+        st.dataframe(top5)
+
+    with col2:
+        st.write("⚠️ Weak Performers")
+        st.dataframe(weak5)
+
+    st.divider()
+
+    # ---------------- PASS / FAIL ----------------
+    st.subheader("✅ Pass / Fail Distribution")
+
+    pass_mark = st.slider(
+        "Select Pass Marks",
+        30, 60, 35,
+        key="ana_pass"
+    )
+
+    data["Result"] = data["Marks"].apply(
+        lambda x: "Pass" if x >= pass_mark else "Fail"
+    )
+
+    result_count = data["Result"].value_counts()
+
+    fig1, ax1 = plt.subplots()
+    result_count.plot(kind="pie", autopct='%1.1f%%', ax=ax1)
+    ax1.set_ylabel("")
+
+    st.pyplot(fig1)
+
+    st.divider()
+
+    # ---------------- SUBJECT AVERAGE ----------------
+    st.subheader("📚 Subject-wise Average Marks")
+
+    sub_avg = data.groupby("Subject")["Marks"].mean()
+
+    fig2, ax2 = plt.subplots()
+    sub_avg.plot(kind="bar", ax=ax2)
+    ax2.set_ylabel("Average Marks")
+
+    st.pyplot(fig2)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+
+# ---------------- CHATBOT ----------------
+def chatbot():
+
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.header("🤖 AI Assistant")
+
+    st.subheader("Need Advanced Help?")
+
+    st.write("Click the button below to open ChatGPT:")
+
+    # Main redirect button
+    st.link_button(
+        "💬 Open ChatGPT",
+        "https://chat.openai.com",
+        use_container_width=True
+    )
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+# ---------------- DASHBOARD ----------------
+def dashboard():
+
+    st.markdown(f"""
+    <div>
+    <h2 style="color:gold;">👋 Welcome {st.session_state.user}</h2>
+    <p>Smart Classroom Dashboard</p>
+    </div>
+    """,unsafe_allow_html=True)
+
+
+    menu = ["Attendance","Assignments","Marks","Analytics","Chatbot","Logout"]
+
+    choice = st.sidebar.radio("Menu",menu)
+
+
+    if choice=="Attendance":
+        attendance()
+
+    elif choice=="Assignments":
+        assignments()
+
+    elif choice=="Marks":
+        marks()
+
+    elif choice=="Analytics":
+        analytics()
+
+    elif choice=="Chatbot":
+        chatbot()
+
+    elif choice=="Logout":
+
+        st.session_state.login = False
+        st.rerun()
+
+
+# ---------------- MAIN ----------------
+if "login" not in st.session_state:
+    st.session_state.login = False
+
+
+st.markdown("""
+<div class="card">
+<h1 style="color:green;">🏫 Smart Teacher Assistant Platform</h1>
+<p style="text-align:center;font-size:18px;color:black;">
+AI + Digital Management System for Teachers
+</p>
+</div>
+""",unsafe_allow_html=True)
+
+
+tab1,tab2 = st.tabs(["Login","Signup"])
+
+
+if not st.session_state.login:
+
+    with tab1:
+        login()
+
+    with tab2:
+        signup()
+
+else:
+    dashboard()
