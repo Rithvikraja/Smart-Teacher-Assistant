@@ -183,6 +183,23 @@ def login():
 
     st.markdown('</div>', unsafe_allow_html=True)
 
+from datetime import timedelta
+
+# ---------------- WORKING DAYS FUNCTION ----------------
+def get_working_days(start_date, end_date, holidays=None):
+    if holidays is None:
+        holidays = []
+
+    count = 0
+    current = start_date
+
+    while current <= end_date:
+        # weekday(): Monday=0 ... Sunday=6
+        if current.weekday() != 6 and current not in holidays:
+            count += 1
+        current += timedelta(days=1)
+
+    return count
 
 # ---------------- ATTENDANCE ----------------
 def attendance():
@@ -266,6 +283,19 @@ def attendance():
         st.dataframe(day_data)
 
     st.divider()
+    # Get all dates for this user
+    all_dates = pd.to_datetime(df["Date"], errors="coerce")
+
+    # Remove NaT values
+    all_dates = all_dates.dropna()
+
+    if len(all_dates) > 0:
+     start_date = all_dates.min().date()
+     end_date = all_dates.max().date()
+    else:
+     start_date = date.today()
+     end_date = date.today()
+
 
     # -------- PRESENT COUNT --------
     st.subheader("📊 Student Attendance Summary")
@@ -287,7 +317,8 @@ def attendance():
             present_days = student_data[student_data["Status"] == "Present"]["Date"].nunique()
 
 
-            total_days = student_data["Date"].nunique()
+            # Calculate working days between start and end date
+            total_days = get_working_days(start_date, end_date)
             percentage = round((present_days / total_days) * 100, 2)
             col1, col2 = st.columns(2)
 
@@ -879,6 +910,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
