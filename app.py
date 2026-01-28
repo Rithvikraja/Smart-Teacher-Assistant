@@ -6,8 +6,6 @@ import bcrypt
 import qrcode
 from io import BytesIO
 from datetime import date
-from streamlit_autorefresh import st_autorefresh
-
 
 
 # ---------------- PAGE CONFIG ----------------
@@ -187,20 +185,12 @@ def login():
 
 # ---------------- ATTENDANCE ----------------
 def attendance():
-    # Auto refresh every 5 seconds
-    st_autorefresh(interval=5000, key="att_refresh")
-
     # -------- QR CODE ATTENDANCE --------
-    # -------- QR CODE ATTENDANCE --------
-    st.subheader("📸 QR Attendance")
+    st.subheader("📸 QR Attendance (Today)")
 
-    qr_date = st.date_input(
-        "Select Date for QR Attendance",
-        value=date.today(),
-        key="qr_date"
-    )
+    today = date.today()
 
-    app_url = f"https://smart-teacher-assistant.streamlit.app/?page=student&date={qr_date}"
+    app_url = f"https://smart-teacher-assistant.streamlit.app//?page=student"
 
     qr = qrcode.make(app_url)
 
@@ -209,7 +199,7 @@ def attendance():
 
     st.image(buf.getvalue(), width=200)
 
-    st.caption(f"Scan to mark attendance for {qr_date}")
+    st.caption("Students scan this QR to mark attendance")
 
     st.divider()
 
@@ -257,10 +247,9 @@ def attendance():
     df = pd.read_csv(ATT_FILE)
 
     day_data = df[
-    ((df["Username"] == user) | (df["Username"] == "QR-STUDENT")) &
-    (df["Date"] == str(view_date))
-]
-
+        (df["Username"] == user) &
+        (df["Date"] == str(view_date))
+        ]
 
     if len(day_data) == 0:
         st.info("No records for this date")
@@ -358,22 +347,14 @@ def attendance():
 
 
 # ---------------- STUDENT QR ATTENDANCE ----------------
-# ---------------- STUDENT QR ATTENDANCE ----------------
 def student_attendance():
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("📱 Student Attendance (QR Scan)")
 
-    params = st.query_params
+    today = date.today()
 
-    if "date" not in params:
-        st.error("Invalid QR Code")
-        return
-
-    # Extract real date string
-    att_date = params["date"][0]
-
-    st.write(f"📅 Attendance Date: **{att_date}**")
+    st.write(f"📅 Date: **{today}**")
 
     roll = st.text_input("Roll No")
     name = st.text_input("Student Name")
@@ -386,21 +367,21 @@ def student_attendance():
 
         df = pd.read_csv(ATT_FILE)
 
-        # Prevent duplicate
+        # Check already marked
         already = df[
             (df["Roll"] == roll) &
-            (df["Date"] == att_date)
+            (df["Date"] == str(today))
         ]
 
         if len(already) > 0:
-            st.info("Already marked")
+            st.info("Attendance already marked")
             return
 
         df.loc[len(df)] = [
             "QR-STUDENT",
             roll,
             name,
-            att_date,
+            today,
             "Present"
         ]
 
@@ -409,8 +390,6 @@ def student_attendance():
         st.success("🎉 Attendance Marked Successfully")
 
     st.markdown('</div>', unsafe_allow_html=True)
-
-
 
 # ---------------- ASSIGNMENTS ----------------
 def assignments():
@@ -823,7 +802,7 @@ if "login" not in st.session_state:
 
 st.markdown("""
 <div class="card">
-<h1 style="color:green;">🏫 Smart Teacher Assistant</h1>
+<h1 style="color:green;">🏫 Smart Teacher Assistant Platform</h1>
 <p style="text-align:center;font-size:18px;color:black;">
 AI + Digital Management System for Teachers
 </p>
@@ -850,10 +829,3 @@ if not st.session_state.login:
 
 else:
     dashboard()
-
-
-
-
-
-
-
