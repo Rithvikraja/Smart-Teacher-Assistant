@@ -285,17 +285,17 @@ def attendance():
 
            percentage = round((present_days / total_days) * 100, 2)
 
-col1, col2 = st.columns(2)
+           col1, col2 = st.columns(2)
 
-with col1:
-    st.metric("✅ Present Days", present_days)
+           with col1:
+              st.metric("✅ Present Days", present_days)
 
-with col2:
-    st.metric("📊 Attendance %", f"{percentage}%")
+           with col2:
+              st.metric("📊 Attendance %", f"{percentage}%")
 
 
-    else:
-        st.info("Enter Roll No to see attendance summary")
+           else:
+              st.info("Enter Roll No to see attendance summary")
 
     st.markdown('</div>', unsafe_allow_html=True)
     st.divider()
@@ -847,6 +847,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
