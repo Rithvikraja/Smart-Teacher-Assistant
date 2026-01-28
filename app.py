@@ -437,7 +437,7 @@ def assignments():
     df = pd.read_csv(ASSIGN_FILE)
 
     if "Marks" not in df.columns:
-        df["Marks"] = 10
+        df["Marks"] = 0
         df.to_csv(ASSIGN_FILE, index=False)
 
     if st.button("Submit Assignment", key="ass_btn"):
@@ -844,6 +844,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
