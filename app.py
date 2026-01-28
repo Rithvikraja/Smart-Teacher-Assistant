@@ -186,11 +186,16 @@ def login():
 # ---------------- ATTENDANCE ----------------
 def attendance():
     # -------- QR CODE ATTENDANCE --------
-    st.subheader("📸 QR Attendance (Today)")
+    # -------- QR CODE ATTENDANCE --------
+    st.subheader("📸 QR Attendance")
 
-    today = date.today()
+    qr_date = st.date_input(
+        "Select Date for QR Attendance",
+        value=date.today(),
+        key="qr_date"
+    )
 
-    app_url = f"https://smart-teacher-assistant.streamlit.app//?page=student"
+    app_url = f"https://https://smart-teacher-assistant.streamlit.app//?page=student&date={qr_date}"
 
     qr = qrcode.make(app_url)
 
@@ -199,7 +204,7 @@ def attendance():
 
     st.image(buf.getvalue(), width=200)
 
-    st.caption("Students scan this QR to mark attendance")
+    st.caption(f"Scan to mark attendance for {qr_date}")
 
     st.divider()
 
@@ -347,14 +352,21 @@ def attendance():
 
 
 # ---------------- STUDENT QR ATTENDANCE ----------------
+# ---------------- STUDENT QR ATTENDANCE ----------------
 def student_attendance():
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("📱 Student Attendance (QR Scan)")
 
-    today = date.today()
+    query = st.query_params
 
-    st.write(f"📅 Date: **{today}**")
+    if "date" not in query:
+        st.error("Invalid QR Code")
+        return
+
+    att_date = query["date"]
+
+    st.write(f"📅 Attendance Date: **{att_date}**")
 
     roll = st.text_input("Roll No")
     name = st.text_input("Student Name")
@@ -370,7 +382,7 @@ def student_attendance():
         # Check already marked
         already = df[
             (df["Roll"] == roll) &
-            (df["Date"] == str(today))
+            (df["Date"] == str(att_date))
         ]
 
         if len(already) > 0:
@@ -381,7 +393,7 @@ def student_attendance():
             "QR-STUDENT",
             roll,
             name,
-            today,
+            att_date,
             "Present"
         ]
 
@@ -390,6 +402,7 @@ def student_attendance():
         st.success("🎉 Attendance Marked Successfully")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 # ---------------- ASSIGNMENTS ----------------
 def assignments():
@@ -802,7 +815,7 @@ if "login" not in st.session_state:
 
 st.markdown("""
 <div class="card">
-<h1 style="color:green;">🏫 Smart Teacher Assistant Platform</h1>
+<h1 style="color:green;">🏫 Smart Teacher Assistant</h1>
 <p style="text-align:center;font-size:18px;color:black;">
 AI + Digital Management System for Teachers
 </p>
@@ -829,4 +842,3 @@ if not st.session_state.login:
 
 else:
     dashboard()
-
