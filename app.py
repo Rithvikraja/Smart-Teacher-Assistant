@@ -358,7 +358,7 @@ def student_attendance():
 
     st.write(f"📅 Date: **{today}**")
 
-    roll = st.text_input("Roll No (Format: 12345-ABC-678)")
+    roll = st.text_input("Roll No")
     name = st.text_input("Student Name")
 
     # Pattern: 5 digits - 3 letters - 3 digits
@@ -372,7 +372,7 @@ def student_attendance():
 
         # Validate roll format
         if not re.match(pattern, roll):
-            st.error("❌ Invalid Roll No format. Use: 12345-ABC-678")
+            st.error("❌ Invalid Roll No format.")
             return
 
         df = pd.read_csv(ATT_FILE)
@@ -841,6 +841,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
