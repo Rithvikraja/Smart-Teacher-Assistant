@@ -61,6 +61,23 @@ input {
     box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
     margin-bottom: 15px;
 }
+/* Bigger Sidebar Menu */
+section[data-testid="stSidebar"] label {
+    font-size: 18px !important;
+    font-weight: bold;
+}
+
+section[data-testid="stSidebar"] div[role="radiogroup"] > label {
+    padding: 7px 10px !important;
+    margin-bottom: 8px !important;
+    border-radius: 8px;
+}
+
+section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover {
+    background-color: rgba(255,255,255,0.2);
+    cursor: pointer;
+    
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -163,22 +180,20 @@ def attendance():
 
     user = st.session_state.user
 
-    # Select date
-    selected_date = st.date_input("Select Attendance Date", key="att_date")
+    # -------- MARK ATTENDANCE --------
+    st.subheader("📝 Mark Attendance")
 
-    st.subheader(f"📅 Attendance for: {selected_date}")
+    selected_date = st.date_input("Select Attendance Date", key="att_date")
 
     roll = st.text_input("Roll No", key="att_roll")
     name = st.text_input("Student Name", key="att_name")
 
     status = st.selectbox("Status", ["Present", "Absent"], key="att_status")
 
-    # Save attendance
     if st.button("Save Attendance", key="att_btn"):
 
         df = pd.read_csv(ATT_FILE)
 
-        # Check duplicate for same user + student + date
         already = df[
             (df["Username"] == user) &
             (df["Roll"] == roll) &
@@ -186,34 +201,70 @@ def attendance():
         ]
 
         if len(already) > 0:
-            st.warning("Attendance already marked for this student today!")
+            st.warning("Attendance already marked for this day!")
             return
 
-        # Save record
         df.loc[len(df)] = [user, roll, name, selected_date, status]
         df.to_csv(ATT_FILE, index=False)
 
         st.success("Attendance Saved Successfully")
 
-    # ---------------- VIEW BY DATE ----------------
-    st.subheader("📂 View Attendance (Day Wise)")
+    st.divider()
+
+    # -------- VIEW BY DATE --------
+    st.subheader("📅 View Attendance (By Date)")
 
     view_date = st.date_input("Choose Date to View", key="att_view_date")
 
     df = pd.read_csv(ATT_FILE)
 
-    # Filter by user and date
     day_data = df[
         (df["Username"] == user) &
         (df["Date"] == str(view_date))
     ]
 
     if len(day_data) == 0:
-        st.info("No attendance records for this date")
+        st.info("No records for this date")
     else:
         st.dataframe(day_data)
 
+    st.divider()
+
+    # -------- PRESENT COUNT --------
+    st.subheader("📊 Student Attendance Summary")
+
+    search_roll = st.text_input("Enter Roll No", key="att_search")
+
+    if search_roll.strip() != "":
+
+        student_data = df[
+            (df["Username"] == user) &
+            (df["Roll"] == search_roll)
+        ]
+
+        if len(student_data) == 0:
+            st.warning("No attendance found for this Roll No")
+
+        else:
+            present_days = len(
+                student_data[student_data["Status"] == "Present"]
+            )
+
+            total_days = len(student_data)
+
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.metric("✅ Present Days", present_days)
+
+            with col2:
+                st.metric("📅 Total Days", total_days)
+
+    else:
+        st.info("Enter Roll No to see attendance summary")
+
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 # ---------------- ASSIGNMENTS ----------------
 def assignments():
@@ -469,11 +520,20 @@ def analytics():
 
     sub_avg = data.groupby("Subject")["Marks"].mean()
 
-    fig2, ax2 = plt.subplots()
-    sub_avg.plot(kind="bar", ax=ax2)
-    ax2.set_ylabel("Average Marks")
+    try:
+        if len(sub_avg) > 0:
 
-    st.pyplot(fig2)
+            fig2, ax2 = plt.subplots()
+            sub_avg.plot(kind="bar", ax=ax2)
+            ax2.set_ylabel("Average Marks")
+
+            st.pyplot(fig2)
+
+        else:
+            st.info("Not enough data to show subject-wise chart")
+
+    except Exception:
+        st.warning("Subject-wise chart cannot be generated (insufficient data)")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
