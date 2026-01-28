@@ -354,12 +354,37 @@ def attendance():
         return
 
     # Group by student
+    # Convert Date column to datetime
+    user_data["Date"] = pd.to_datetime(user_data["Date"], errors="coerce")
+
+# Get academic range
+    all_dates = user_data["Date"].dropna()
+
+    if len(all_dates) > 0:
+     start_date = all_dates.min().date()
+     end_date = all_dates.max().date()
+    else:
+     start_date = date.today()
+     end_date = date.today()
+
+# Calculate total working days
+    total_working_days = get_working_days(start_date, end_date)
+
+# Group by student (only Present count)
     summary = user_data.groupby(
-        ["Roll", "Name"]
-    ).agg(
-        Total_Days=("Status", "count"),
-        Present_Days=("Status", lambda x: (x == "Present").sum())
-    ).reset_index()
+    ["Roll", "Name"]
+).agg(
+    Present_Days=("Status", lambda x: (x == "Present").sum())
+).reset_index()
+
+# Add Total Days column (same for all students)
+    summary["Total_Days"] = total_working_days
+
+# Calculate Percentage
+    summary["Percentage"] = round(
+    (summary["Present_Days"] / summary["Total_Days"]) * 100, 2
+)
+
 
     # Calculate Percentage
     summary["Percentage"] = round(
@@ -915,6 +940,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
