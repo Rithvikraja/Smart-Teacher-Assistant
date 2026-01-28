@@ -283,13 +283,8 @@ def attendance():
 
             total_days = len(student_data)
 
-            col1, col2 = st.columns(2)
+            st.metric("✅ Present Days", present_days)
 
-            with col1:
-                st.metric("✅ Present Days", present_days)
-
-            with col2:
-                st.metric("📅 Total Days", total_days)
 
     else:
         st.info("Enter Roll No to see attendance summary")
@@ -844,6 +839,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
