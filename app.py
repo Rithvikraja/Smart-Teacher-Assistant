@@ -247,9 +247,10 @@ def attendance():
     df = pd.read_csv(ATT_FILE)
 
     day_data = df[
-        (df["Username"] == user) &
-        (df["Date"] == str(view_date))
-        ]
+    ((df["Username"] == user) | (df["Username"] == "QR-STUDENT")) &
+    (df["Date"] == str(view_date))
+]
+
 
     if len(day_data) == 0:
         st.info("No records for this date")
@@ -847,4 +848,5 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
