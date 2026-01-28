@@ -277,11 +277,11 @@ def attendance():
             st.warning("No attendance found for this Roll No")
 
         else:
-            present_days = len(
-                student_data[student_data["Status"] == "Present"]
-            )
+            present_days = student_data[student_data["Status"] == "Present"]["Date"].nunique()
 
-            total_days = len(student_data)
+
+            total_days = student_data["Date"].nunique()
+
 
             st.metric("✅ Present Days", present_days)
 
@@ -839,6 +839,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
