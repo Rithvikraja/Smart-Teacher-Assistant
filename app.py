@@ -6,6 +6,8 @@ import bcrypt
 import qrcode
 from io import BytesIO
 from datetime import date
+from streamlit_autorefresh import st_autorefresh
+
 
 
 # ---------------- PAGE CONFIG ----------------
@@ -842,4 +844,5 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
