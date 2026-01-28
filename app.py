@@ -281,21 +281,18 @@ def attendance():
 
 
             total_days = student_data["Date"].nunique()
+            percentage = round((present_days / total_days) * 100, 2)
+            col1, col2 = st.columns(2)
 
-
-           percentage = round((present_days / total_days) * 100, 2)
-
-           col1, col2 = st.columns(2)
-
-           with col1:
+            with col1:
               st.metric("✅ Present Days", present_days)
 
-           with col2:
+            with col2:
               st.metric("📊 Attendance %", f"{percentage}%")
+                            
 
 
-           else:
-              st.info("Enter Roll No to see attendance summary")
+          
 
     st.markdown('</div>', unsafe_allow_html=True)
     st.divider()
@@ -847,6 +844,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
