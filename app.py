@@ -189,9 +189,16 @@ def attendance():
     # -------- QR CODE ATTENDANCE --------
     st.subheader("📸 QR Attendance (Today)")
 
-    today = date.today()
+    qr_date = st.date_input(
+    "Select Date for QR Attendance",
+    value=date.today(),
+    key="qr_date"
+)
 
-    app_url = f"https://smart-teacher-assistant.streamlit.app/?page=student"
+    app_url = f"https://smart-teacher-assistant.streamlit.app/?page=student&date={qr_date}"
+
+
+    
 
     qr = qrcode.make(app_url)
 
@@ -357,9 +364,16 @@ def student_attendance():
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("📱 Student Attendance (QR Scan)")
 
-    today = date.today()
+    query = st.query_params
 
-    st.write(f"📅 Date: **{today}**")
+    if "date" not in query:
+      st.error("Invalid QR Code")
+      return
+
+    att_date = query["date"]
+
+    st.write(f"📅 Date: **{att_date}**")
+
 
     roll = st.text_input("Roll No")
     name = st.text_input("Student Name")
@@ -383,7 +397,8 @@ def student_attendance():
         # Prevent duplicate
         already = df[
             (df["Roll"] == roll) &
-            (df["Date"] == str(today))
+            (df["Date"] == str(att_date))
+
         ]
 
         if len(already) > 0:
@@ -394,7 +409,7 @@ def student_attendance():
             "QR-STUDENT",
             roll,
             name,
-            today,
+            att_date,
             "Present"
         ]
 
@@ -864,6 +879,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
