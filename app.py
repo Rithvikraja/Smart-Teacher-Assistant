@@ -195,7 +195,7 @@ def attendance():
 
     today = date.today()
 
-    app_url = f"http://localhost:8501/?page=student"
+    app_url = f"https://smart-teacher-assistant.streamlit.app//?page=student"
 
     qr = qrcode.make(app_url)
 
@@ -1585,4 +1585,5 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
