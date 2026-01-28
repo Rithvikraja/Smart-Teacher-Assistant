@@ -6,6 +6,7 @@ import bcrypt
 import qrcode
 from io import BytesIO
 from datetime import date
+import re
 
 
 # ---------------- PAGE CONFIG ----------------
@@ -357,13 +358,21 @@ def student_attendance():
 
     st.write(f"📅 Date: **{today}**")
 
-    roll = st.text_input("Roll No")
+    roll = st.text_input("Roll No (Format: 12345-ABC-678)")
     name = st.text_input("Student Name")
+
+    # Pattern: 5 digits - 3 letters - 3 digits
+    pattern = r"^\d{5}-[A-Za-z]{3}-\d{3}$"
 
     if st.button("✅ Mark Present"):
 
         if roll.strip() == "" or name.strip() == "":
             st.warning("Please fill all fields")
+            return
+
+        # Validate roll format
+        if not re.match(pattern, roll):
+            st.error("❌ Invalid Roll No format. Use: 12345-ABC-678")
             return
 
         df = pd.read_csv(ATT_FILE)
@@ -391,6 +400,7 @@ def student_attendance():
         st.success("✅ Attendance Marked Successfully")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 # ---------------- ASSIGNMENTS ----------------
@@ -831,6 +841,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
