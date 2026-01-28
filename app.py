@@ -359,37 +359,55 @@ def student_attendance():
     roll = st.text_input("Roll No")
     name = st.text_input("Student Name")
 
+    submitted = False   # Flag
+
     if st.button("✅ Mark Present"):
 
         if roll.strip() == "" or name.strip() == "":
             st.warning("Please fill all fields")
-            return
+        else:
 
-        df = pd.read_csv(ATT_FILE)
+            df = pd.read_csv(ATT_FILE)
 
-        # Check already marked
-        already = df[
-            (df["Roll"] == roll) &
-            (df["Date"] == str(today))
-        ]
+            # Prevent duplicate
+            already = df[
+                (df["Roll"] == roll) &
+                (df["Date"] == str(today))
+            ]
 
-        if len(already) > 0:
-            st.info("Attendance already marked")
-            return
+            if len(already) > 0:
+                st.info("Attendance already marked")
+            else:
 
-        df.loc[len(df)] = [
-            "QR-STUDENT",
-            roll,
-            name,
-            today,
-            "Present"
-        ]
+                df.loc[len(df)] = [
+                    "QR-STUDENT",
+                    roll,
+                    name,
+                    today,
+                    "Present"
+                ]
 
-        df.to_csv(ATT_FILE, index=False)
+                df.to_csv(ATT_FILE, index=False)
 
-        st.success("🎉 Attendance Marked Successfully")
+                st.success("🎉 Attendance Marked Successfully")
+                submitted = True
+
+    st.divider()
+
+    # -------- SHOW TODAY'S ATTENDANCE TABLE --------
+    st.subheader("📋 Today's Attendance")
+
+    df = pd.read_csv(ATT_FILE)
+
+    today_data = df[df["Date"] == str(today)]
+
+    if len(today_data) == 0:
+        st.info("No attendance recorded yet")
+    else:
+        st.dataframe(today_data)
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 # ---------------- ASSIGNMENTS ----------------
 def assignments():
@@ -829,3 +847,4 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
