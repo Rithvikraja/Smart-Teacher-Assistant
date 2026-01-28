@@ -426,13 +426,12 @@ def assignments():
         "Upload File (Optional - Drag & Drop Supported)",
         key="ass_file"
     )
-    ass_marks = st.number_input(
-        "Assignment Marks (0 - 10)",
-        min_value=0,
-        max_value=10,
-        value=0,
-        key="ass_marks"
-    )
+    ass_marks = st.selectbox(
+    "Assignment Marks (0 - 10)",
+    options=list(range(0, 11)),
+    key="ass_marks"
+)
+
     # Fix assignments file if Marks column missing
     df = pd.read_csv(ASSIGN_FILE)
 
@@ -866,6 +865,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
