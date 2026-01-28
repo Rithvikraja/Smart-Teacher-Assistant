@@ -495,17 +495,17 @@ def analytics():
     # ---------------- PASS / FAIL ----------------
     st.subheader("✅ Pass / Fail Distribution")
 
-    pass_mark = st.slider(
-        "Select Pass Marks",
-        30, 60, 35,
-        key="ana_pass"
+
+    # Create fresh copy (important for updating)
+    temp_data = data.copy()
+
+    PASS_MARK = 35  # Fixed pass mark
+
+    temp_data["Result"] = temp_data["Marks"].apply(
+        lambda x: "Pass" if x >= PASS_MARK else "Fail"
     )
 
-    data["Result"] = data["Marks"].apply(
-        lambda x: "Pass" if x >= pass_mark else "Fail"
-    )
-
-    result_count = data["Result"].value_counts()
+    result_count = temp_data["Result"].value_counts()
 
     fig1, ax1 = plt.subplots()
     result_count.plot(kind="pie", autopct='%1.1f%%', ax=ax1)
