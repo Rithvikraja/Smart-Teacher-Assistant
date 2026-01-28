@@ -363,13 +363,14 @@ def student_attendance():
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("📱 Student Attendance (QR Scan)")
 
-    query = st.query_params
+    params = st.query_params
 
-    if "date" not in query:
+    if "date" not in params:
         st.error("Invalid QR Code")
         return
 
-    att_date = query["date"]
+    # Extract real date string
+    att_date = params["date"][0]
 
     st.write(f"📅 Attendance Date: **{att_date}**")
 
@@ -384,14 +385,14 @@ def student_attendance():
 
         df = pd.read_csv(ATT_FILE)
 
-        # Check already marked
+        # Prevent duplicate
         already = df[
             (df["Roll"] == roll) &
-            (df["Date"] == str(att_date))
+            (df["Date"] == att_date)
         ]
 
         if len(already) > 0:
-            st.info("Attendance already marked")
+            st.info("Already marked")
             return
 
         df.loc[len(df)] = [
@@ -407,6 +408,7 @@ def student_attendance():
         st.success("🎉 Attendance Marked Successfully")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 
 # ---------------- ASSIGNMENTS ----------------
@@ -847,6 +849,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
