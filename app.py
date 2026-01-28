@@ -191,7 +191,7 @@ def attendance():
 
     today = date.today()
 
-    app_url = f"https://smart-teacher-assistant.streamlit.app//?page=student"
+    app_url = f"https://smart-teacher-assistant.streamlit.app/?page=student"
 
     qr = qrcode.make(app_url)
 
@@ -268,9 +268,10 @@ def attendance():
     if search_roll.strip() != "":
 
         student_data = df[
-            (df["Username"] == user) &
-            (df["Roll"] == search_roll)
-            ]
+    ((df["Username"] == user) | (df["Username"] == "QR-STUDENT")) &
+    (df["Roll"] == search_roll)
+]
+
 
         if len(student_data) == 0:
             st.warning("No attendance found for this Roll No")
@@ -301,7 +302,9 @@ def attendance():
 
     df = pd.read_csv(ATT_FILE)
 
-    user_data = df[df["Username"] == user]
+    user_data = df[
+    (df["Username"] == user) | (df["Username"] == "QR-STUDENT")
+]
 
     if len(user_data) == 0:
         st.info("No attendance data available")
@@ -841,6 +844,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
