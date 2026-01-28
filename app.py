@@ -443,26 +443,28 @@ def assignments():
     if st.button("Submit Assignment", key="ass_btn"):
 
     # Validate marks
-    if ass_marks < 0 or ass_marks > 10:
+     if ass_marks < 0 or ass_marks > 10:
         st.error("❌ Marks must be between 0 and 10")
         return
 
-    if roll.strip() == "" or name.strip() == "" or ass.strip() == "":
+     if roll.strip() == "" or name.strip() == "" or ass.strip() == "":
         st.warning("Please fill all fields")
         return
 
-    df = pd.read_csv(ASSIGN_FILE)
+     df = pd.read_csv(ASSIGN_FILE)
 
     # Optional file
-    if file is None:
+     if file is None:
         filename = "No File"
-    else:
+     else:
         filename = file.name
 
-    df.loc[len(df)] = [user, roll, name, ass, filename, ass_marks]
-    df.to_csv(ASSIGN_FILE, index=False)
+     df.loc[len(df)] = [user, roll, name, ass, filename, ass_marks]
+     df.to_csv(ASSIGN_FILE, index=False)
 
-    st.success("✅ Assignment Submitted Successfully")
+     st.success("✅ Assignment Submitted Successfully")
+
+         
 
 
     st.divider()
