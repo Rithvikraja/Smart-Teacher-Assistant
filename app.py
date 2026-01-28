@@ -284,17 +284,22 @@ def attendance():
 
     st.divider()
     # Get all dates for this user
-    all_dates = pd.to_datetime(df["Date"], errors="coerce")
+    # Get attendance dates only for this teacher
+    user_dates = df[
+    (df["Username"] == user) | (df["Username"] == "QR-STUDENT")
+    ]["Date"]
 
-    # Remove NaT values
-    all_dates = all_dates.dropna()
+# Convert to datetime
+    all_dates = pd.to_datetime(user_dates, errors="coerce").dropna()
 
+# Find start and end date
     if len(all_dates) > 0:
      start_date = all_dates.min().date()
      end_date = all_dates.max().date()
     else:
      start_date = date.today()
      end_date = date.today()
+
 
 
     # -------- PRESENT COUNT --------
@@ -910,6 +915,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
