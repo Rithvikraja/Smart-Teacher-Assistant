@@ -283,7 +283,15 @@ def attendance():
             total_days = student_data["Date"].nunique()
 
 
-            st.metric("✅ Present Days", present_days)
+           percentage = round((present_days / total_days) * 100, 2)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.metric("✅ Present Days", present_days)
+
+with col2:
+    st.metric("📊 Attendance %", f"{percentage}%")
 
 
     else:
