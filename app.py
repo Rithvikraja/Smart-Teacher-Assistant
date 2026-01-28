@@ -442,18 +442,28 @@ def assignments():
 
     if st.button("Submit Assignment", key="ass_btn"):
 
-        df = pd.read_csv(ASSIGN_FILE)
+    # Validate marks
+    if ass_marks < 0 or ass_marks > 10:
+        st.error("❌ Marks must be between 0 and 10")
+        return
 
-        # Optional file
-        if file is None:
-            filename = "No File"
-        else:
-            filename = file.name
+    if roll.strip() == "" or name.strip() == "" or ass.strip() == "":
+        st.warning("Please fill all fields")
+        return
 
-        df.loc[len(df)] = [user, roll, name, ass, filename, ass_marks]
-        df.to_csv(ASSIGN_FILE, index=False)
+    df = pd.read_csv(ASSIGN_FILE)
 
-        st.success("Assignment Submitted Successfully")
+    # Optional file
+    if file is None:
+        filename = "No File"
+    else:
+        filename = file.name
+
+    df.loc[len(df)] = [user, roll, name, ass, filename, ass_marks]
+    df.to_csv(ASSIGN_FILE, index=False)
+
+    st.success("✅ Assignment Submitted Successfully")
+
 
     st.divider()
 
@@ -844,6 +854,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
