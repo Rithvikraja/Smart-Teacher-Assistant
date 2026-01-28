@@ -187,6 +187,9 @@ def login():
 
 # ---------------- ATTENDANCE ----------------
 def attendance():
+    # Auto refresh every 5 seconds
+st_autorefresh(interval=5000, key="att_refresh")
+
     # -------- QR CODE ATTENDANCE --------
     # -------- QR CODE ATTENDANCE --------
     st.subheader("📸 QR Attendance")
@@ -844,5 +847,6 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
