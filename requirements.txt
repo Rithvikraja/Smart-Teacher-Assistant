@@ -6,4 +6,6 @@ bcrypt
 scikit-learn
 qrcode[pil]
 Pillow
+streamlit-autorefresh
+
 
