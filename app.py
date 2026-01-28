@@ -517,13 +517,12 @@ def slip_test():
     st_name = st.text_input("Student Name", key="slip_name_page")
     st_title = st.text_input("Slip-Test Title", key="slip_title_page")
 
-    st_marks = st.number_input(
-        "Slip-Test Marks (0 - 10)",
-        min_value=0,
-        max_value=10,
-        value=0,
-        key="slip_marks_page"
-    )
+    st_marks = st.selectbox(
+    "Slip-Test Marks (0 - 10)",
+    options=list(range(0, 11)),
+    key="slip_marks_page"
+)
+
 
     st_file = st.file_uploader(
         "Upload Slip-Test File (Optional)",
@@ -865,6 +864,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
