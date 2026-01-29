@@ -243,7 +243,8 @@ def attendance():
     user = st.session_state.user
 
     # -------- MARK ATTENDANCE --------
-    st.subheader("📝 Mark Attendance")
+    # -------- MARK ATTENDANCE --------
+    with st.expander("📝 Manual Attendance (Click to Open)"):
 
     selected_date = st.date_input("Select Attendance Date", key="att_date")
 
@@ -253,6 +254,7 @@ def attendance():
     status = st.selectbox("Status", ["Present", "Absent"], key="att_status")
 
     if st.button("Save Attendance", key="att_btn"):
+
 
         df = pd.read_csv(ATT_FILE)
 
@@ -968,6 +970,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
