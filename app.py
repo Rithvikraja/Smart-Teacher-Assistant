@@ -480,7 +480,7 @@ def student_attendance():
         return
 
     # ✅ Save attendance
-  df.loc[len(df)] = [
+   df.loc[len(df)] = [
         "QR-STUDENT",
         roll,
         name,
@@ -956,6 +956,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
