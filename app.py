@@ -267,10 +267,10 @@ with st.expander("📝 Manual Attendance (Click to Open)"):
             st.warning("Attendance already marked for this day!")
 return
 
-        df.loc[len(df)] = [user, roll, name, selected_date, status]
-        df.to_csv(ATT_FILE, index=False)
+    df.loc[len(df)] = [user, roll, name, selected_date, status]
+    df.to_csv(ATT_FILE, index=False)
 
-        st.success("Attendance Saved Successfully")
+    st.success("Attendance Saved Successfully")
 
     st.divider()
 
@@ -969,6 +969,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
