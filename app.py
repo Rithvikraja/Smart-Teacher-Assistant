@@ -7,6 +7,12 @@ import qrcode
 from io import BytesIO
 from datetime import date
 import re
+import uuid
+
+def get_device_id():
+    if "device_id" not in st.session_state:
+        st.session_state.device_id = str(uuid.uuid4())
+    return st.session_state.device_id
 
 
 # ---------------- PAGE CONFIG ----------------
@@ -960,6 +966,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
