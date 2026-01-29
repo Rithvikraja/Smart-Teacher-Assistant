@@ -430,11 +430,14 @@ def attendance():
 
 # ---------------- STUDENT QR ATTENDANCE ----------------
 def student_attendance():
+
+    # Load attendance file
     df = pd.read_csv(ATT_FILE)
-    # ✅ Add DeviceID column if missing
+
+    # Add DeviceID column if missing (old file fix)
     if "DeviceID" not in df.columns:
-     df["DeviceID"] = ""
-     df.to_csv(ATT_FILE, index=False)
+        df["DeviceID"] = ""
+        df.to_csv(ATT_FILE, index=False)
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("📱 Student Attendance (QR Scan)")
@@ -442,69 +445,68 @@ def student_attendance():
     query = st.query_params
 
     if "date" not in query:
-      st.error("Invalid QR Code")
-      return
+        st.error("Invalid QR Code")
+        return
 
     att_date = query["date"]
 
     st.write(f"📅 Date: **{att_date}**")
 
-
     roll = st.text_input("Roll No")
     name = st.text_input("Student Name")
 
-    # Pattern: 5 digits - 3 letters - 3 digits
     pattern = r"^\d{5}-[A-Za-z]{3}-\d{3}$"
+
+    # ✅ Create device id BEFORE button
+    device_id = get_device_id()
 
     if st.button("✅ Mark Present"):
 
-      if roll.strip() == "" or name.strip() == "":
-        st.warning("Please fill all fields")
-        return
+        if roll.strip() == "" or name.strip() == "":
+            st.warning("Please fill all fields")
+            return
 
-      if not re.match(pattern, roll):
-        st.error("❌ Invalid Roll No format.")
-        return
+        if not re.match(pattern, roll):
+            st.error("❌ Invalid Roll No format.")
+            return
 
+        # ❌ Check same phone
+        phone_used = df[
+            (df["DeviceID"] == device_id) &
+            (df["Date"] == str(att_date))
+        ]
 
-      device_id = get_device_id()   # Get phone ID
+        if len(phone_used) > 0:
+            st.error("❌ This phone already marked attendance today")
+            return
 
-    # ❌ Check: Same phone already used today
-    phone_used = df[
-        (df["DeviceID"] == device_id) &
-        (df["Date"] == str(att_date))
-    ]
+        # ❌ Check same student
+        already = df[
+            (df["Roll"] == roll) &
+            (df["Date"] == str(att_date))
+        ]
 
-    if len(phone_used) > 0:
-        st.error("❌ This phone has already marked attendance today")
-        return
+        if len(already) > 0:
+            st.info("Attendance already marked")
+            return
 
-    # ❌ Check: Student already marked
-    already = df[
-        (df["Roll"] == roll) &
-        (df["Date"] == str(att_date))
-    ]
+        # ✅ Save
+        df.loc[len(df)] = [
+            "QR-STUDENT",
+            roll,
+            name,
+            att_date,
+            "Present",
+            device_id
+        ]
 
-    if len(already) > 0:
-        st.info("Attendance already marked")
-        return
+        df.to_csv(ATT_FILE, index=False)
 
-    # ✅ Save attendance
-    df.loc[len(df)] = [
-        "QR-STUDENT",
-        roll,
-        name,
-        att_date,
-        "Present",
-        device_id
-    ]
-
-    df.to_csv(ATT_FILE, index=False)
-
-    st.success("✅ Attendance Marked Successfully")
- 
+        st.success("✅ Attendance Marked Successfully")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
+
 
 
 
@@ -966,6 +968,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
