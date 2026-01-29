@@ -266,7 +266,7 @@ with st.expander("📝 Manual Attendance (Click to Open)"):
 
         if len(already) > 0:
             st.warning("Attendance already marked for this day!")
-            return
+        return
 
         df.loc[len(df)] = [user, roll, name, selected_date, status]
         df.to_csv(ATT_FILE, index=False)
@@ -970,6 +970,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
