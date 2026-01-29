@@ -425,6 +425,11 @@ def attendance():
 # ---------------- STUDENT QR ATTENDANCE ----------------
 def student_attendance():
     df = pd.read_csv(ATT_FILE)
+    # ✅ Add DeviceID column if missing
+    if "DeviceID" not in df.columns:
+     df["DeviceID"] = ""
+     df.to_csv(ATT_FILE, index=False)
+
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("📱 Student Attendance (QR Scan)")
 
@@ -955,6 +960,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
