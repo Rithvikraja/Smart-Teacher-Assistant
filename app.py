@@ -100,7 +100,10 @@ if not os.path.exists(USER_FILE):
     pd.DataFrame(columns=["Username", "Password"]).to_csv(USER_FILE, index=False)
 
 if not os.path.exists(ATT_FILE):
-    pd.DataFrame(columns=["Username", "Roll", "Name", "Date", "Status"]).to_csv(ATT_FILE, index=False)
+    pd.DataFrame(
+        columns=["Username", "Roll", "Name", "Date", "Status", "DeviceID"]
+    ).to_csv(ATT_FILE, index=False)
+
 
 if not os.path.exists(MARKS_FILE):
     pd.DataFrame(columns=["Username", "Roll", "Name", "Subject", "Marks"]).to_csv(MARKS_FILE, index=False)
@@ -444,39 +447,52 @@ def student_attendance():
 
     if st.button("✅ Mark Present"):
 
-        if roll.strip() == "" or name.strip() == "":
-            st.warning("Please fill all fields")
-            return
+    if roll.strip() == "" or name.strip() == "":
+        st.warning("Please fill all fields")
+        return
 
-        # Validate roll format
-        if not re.match(pattern, roll):
-            st.error("❌ Invalid Roll No format.")
-            return
+    if not re.match(pattern, roll):
+        st.error("❌ Invalid Roll No format.")
+        return
 
-        df = pd.read_csv(ATT_FILE)
+    df = pd.read_csv(ATT_FILE)
 
-        # Prevent duplicate
-        already = df[
-            (df["Roll"] == roll) &
-            (df["Date"] == str(att_date))
+    device_id = get_device_id()   # Get phone ID
 
-        ]
+    # ❌ Check: Same phone already used today
+    phone_used = df[
+        (df["DeviceID"] == device_id) &
+        (df["Date"] == str(att_date))
+    ]
 
-        if len(already) > 0:
-            st.info("Attendance already marked")
-            return
+    if len(phone_used) > 0:
+        st.error("❌ This phone has already marked attendance today")
+        return
 
-        df.loc[len(df)] = [
-            "QR-STUDENT",
-            roll,
-            name,
-            att_date,
-            "Present"
-        ]
+    # ❌ Check: Student already marked
+    already = df[
+        (df["Roll"] == roll) &
+        (df["Date"] == str(att_date))
+    ]
 
-        df.to_csv(ATT_FILE, index=False)
+    if len(already) > 0:
+        st.info("Attendance already marked")
+        return
 
-        st.success("✅ Attendance Marked Successfully")
+    # ✅ Save attendance
+    df.loc[len(df)] = [
+        "QR-STUDENT",
+        roll,
+        name,
+        att_date,
+        "Present",
+        device_id
+    ]
+
+    df.to_csv(ATT_FILE, index=False)
+
+    st.success("✅ Attendance Marked Successfully")
+
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -940,6 +956,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
