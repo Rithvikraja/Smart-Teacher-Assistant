@@ -470,7 +470,7 @@ def student_attendance():
         return
 
     # ❌ Check: Student already marked
-     already = df[
+    already = df[
         (df["Roll"] == roll) &
         (df["Date"] == str(att_date))
     ]
@@ -489,12 +489,12 @@ def student_attendance():
         device_id
     ]
 
-     df.to_csv(ATT_FILE, index=False)
+    df.to_csv(ATT_FILE, index=False)
 
-     st.success("✅ Attendance Marked Successfully")
+    st.success("✅ Attendance Marked Successfully")
 
 
-     st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 
@@ -956,6 +956,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
