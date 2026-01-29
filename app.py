@@ -244,7 +244,7 @@ def attendance():
 
     # -------- MARK ATTENDANCE --------
     # -------- MARK ATTENDANCE --------
-    with st.expander("📝 Manual Attendance (Click to Open)"):
+with st.expander("📝 Manual Attendance (Click to Open)"):
 
     selected_date = st.date_input("Select Attendance Date", key="att_date")
 
@@ -970,6 +970,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
