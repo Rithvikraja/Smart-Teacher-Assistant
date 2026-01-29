@@ -243,6 +243,7 @@ def attendance():
     user = st.session_state.user
 
     # -------- MARK ATTENDANCE --------
+# -------- MARK ATTENDANCE --------
 with st.expander("📝 Manual Attendance (Click to Open)"):
 
     selected_date = st.date_input("Select Attendance Date", key="att_date")
@@ -254,16 +255,13 @@ with st.expander("📝 Manual Attendance (Click to Open)"):
 
     if st.button("Save Attendance", key="att_btn"):
 
-
-
-
         df = pd.read_csv(ATT_FILE)
 
         already = df[
             (df["Username"] == user) &
             (df["Roll"] == roll) &
             (df["Date"] == str(selected_date))
-            ]
+        ]
 
         if len(already) > 0:
             st.warning("Attendance already marked for this day!")
@@ -273,6 +271,7 @@ with st.expander("📝 Manual Attendance (Click to Open)"):
         df.to_csv(ATT_FILE, index=False)
 
         st.success("Attendance Saved Successfully")
+
 
     st.divider()
 
@@ -971,6 +970,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
