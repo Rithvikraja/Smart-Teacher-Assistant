@@ -480,7 +480,7 @@ def student_attendance():
         return
 
     # ✅ Save attendance
-   df.loc[len(df)] = [
+  df.loc[len(df)] = [
         "QR-STUDENT",
         roll,
         name,
@@ -489,12 +489,12 @@ def student_attendance():
         device_id
     ]
 
-    df.to_csv(ATT_FILE, index=False)
+  df.to_csv(ATT_FILE, index=False)
 
-    st.success("✅ Attendance Marked Successfully")
+  st.success("✅ Attendance Marked Successfully")
 
 
-    st.markdown('</div>', unsafe_allow_html=True)
+  st.markdown('</div>', unsafe_allow_html=True)
 
 
 
@@ -956,6 +956,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
