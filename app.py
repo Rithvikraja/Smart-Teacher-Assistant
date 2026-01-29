@@ -447,17 +447,17 @@ def student_attendance():
 
     if st.button("✅ Mark Present"):
 
-    if roll.strip() == "" or name.strip() == "":
+      if roll.strip() == "" or name.strip() == "":
         st.warning("Please fill all fields")
         return
 
-    if not re.match(pattern, roll):
+      if not re.match(pattern, roll):
         st.error("❌ Invalid Roll No format.")
         return
 
-    df = pd.read_csv(ATT_FILE)
+      df = pd.read_csv(ATT_FILE)
 
-    device_id = get_device_id()   # Get phone ID
+      device_id = get_device_id()   # Get phone ID
 
     # ❌ Check: Same phone already used today
     phone_used = df[
@@ -470,7 +470,7 @@ def student_attendance():
         return
 
     # ❌ Check: Student already marked
-    already = df[
+     already = df[
         (df["Roll"] == roll) &
         (df["Date"] == str(att_date))
     ]
@@ -480,7 +480,7 @@ def student_attendance():
         return
 
     # ✅ Save attendance
-    df.loc[len(df)] = [
+   df.loc[len(df)] = [
         "QR-STUDENT",
         roll,
         name,
@@ -489,12 +489,12 @@ def student_attendance():
         device_id
     ]
 
-    df.to_csv(ATT_FILE, index=False)
+     df.to_csv(ATT_FILE, index=False)
 
-    st.success("✅ Attendance Marked Successfully")
+     st.success("✅ Attendance Marked Successfully")
 
 
-    st.markdown('</div>', unsafe_allow_html=True)
+     st.markdown('</div>', unsafe_allow_html=True)
 
 
 
@@ -956,6 +956,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
