@@ -424,7 +424,7 @@ def attendance():
 
 # ---------------- STUDENT QR ATTENDANCE ----------------
 def student_attendance():
-
+    df = pd.read_csv(ATT_FILE)
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("📱 Student Attendance (QR Scan)")
 
@@ -455,7 +455,6 @@ def student_attendance():
         st.error("❌ Invalid Roll No format.")
         return
 
-      df = pd.read_csv(ATT_FILE)
 
       device_id = get_device_id()   # Get phone ID
 
@@ -956,6 +955,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
