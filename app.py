@@ -251,34 +251,35 @@ def attendance():
         name = st.text_input("Student Name", key="att_name")
 
         status = st.selectbox("Status", ["Present", "Absent"], key="att_status")
+        if st.button("Save Attendance", key="att_btn"):
 
-       if st.button("Save Attendance", key="att_btn"):
+    df = pd.read_csv(ATT_FILE)
 
-       df = pd.read_csv(ATT_FILE)
-
-       already = df[
+    already = df[
         (df["Username"] == user) &
         (df["Roll"] == roll) &
         (df["Date"] == str(selected_date))
-        ]
+    ]
 
-        if len(already) > 0:
-         st.warning("Attendance already marked for this day!")
-         return
+    if len(already) > 0:
+        st.warning("Attendance already marked for this day!")
+        return
 
     # ✅ FIXED → Added DeviceID
-       df.loc[len(df)] = [
-         user,
-         roll,
-         name,
-         str(selected_date),
-         status,
-          ""  # DeviceID empty for manual entry
-       ]
+    df.loc[len(df)] = [
+        user,
+        roll,
+        name,
+        str(selected_date),
+        status,
+        ""  # DeviceID empty for manual entry
+    ]
 
-      df.to_csv(ATT_FILE, index=False)
+    df.to_csv(ATT_FILE, index=False)
 
-      st.success("Attendance Saved Successfully")
+    st.success("Attendance Saved Successfully")
+
+       
 
       st.divider()
 
@@ -977,6 +978,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
