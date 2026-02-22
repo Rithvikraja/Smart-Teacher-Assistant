@@ -253,9 +253,9 @@ def attendance():
         status = st.selectbox("Status", ["Present", "Absent"], key="att_status")
         if st.button("Save Attendance", key="att_btn"):
 
-        df = pd.read_csv(ATT_FILE)
+         df = pd.read_csv(ATT_FILE)
 
-        already = df[
+         already = df[
          (df["Username"] == user) &
          (df["Roll"] == roll) &
          (df["Date"] == str(selected_date))
@@ -978,6 +978,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
