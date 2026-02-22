@@ -261,7 +261,7 @@ def attendance():
          (df["Date"] == str(selected_date))
       ]
 
-       if len(already) > 0:
+    if len(already) > 0:
          st.warning("Attendance already marked for this day!")
          return
 
@@ -978,6 +978,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
