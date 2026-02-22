@@ -266,7 +266,7 @@ def attendance():
          return
 
     # ✅ FIXED → Added DeviceID
-      df.loc[len(df)] = [
+    df.loc[len(df)] = [
         user,
         roll,
         name,
@@ -275,13 +275,13 @@ def attendance():
         ""  # DeviceID empty for manual entry
      ]
 
-     df.to_csv(ATT_FILE, index=False)
+    df.to_csv(ATT_FILE, index=False)
 
-     st.success("Attendance Saved Successfully")
+    st.success("Attendance Saved Successfully")
 
        
 
-      st.divider()
+    st.divider()
 
     # -------- VIEW BY DATE --------
     st.subheader("📅 View Attendance (By Date)")
@@ -978,6 +978,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
