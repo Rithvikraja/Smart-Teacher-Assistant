@@ -22,72 +22,97 @@ st.set_page_config(page_title="Smart Teacher Assistant", layout="wide")
 st.markdown("""
 <style>
 
-.main {
-    background: linear-gradient(to right, #eef2f3, #ffffff);
+/* ---------- MAIN BACKGROUND ---------- */
+[data-testid="stAppViewContainer"] {
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    font-family: 'Segoe UI', sans-serif;
 }
 
+/* ---------- SIDEBAR ---------- */
 section[data-testid="stSidebar"] {
-    background: linear-gradient(#1f4037, #99f2c8);
-    color: white;
+    background: linear-gradient(180deg, #0f2027, #203a43, #2c5364);
+    padding-top: 20px;
 }
 
+section[data-testid="stSidebar"] * {
+    color: white !important;
+}
+
+/* ---------- HEADINGS ---------- */
 h1 {
-    color: #1f4037;
+    font-size: 42px !important;
+    font-weight: 700 !important;
     text-align: center;
-    font-weight: bold;
+    background: linear-gradient(to right, #1f4037, #99f2c8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 h2, h3 {
-    color: #2c3e50;
-    font-weight: bold;
+    color: #1f2937;
+    font-weight: 600;
 }
 
+/* ---------- CARDS ---------- */
+.card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(15px);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 25px;
+    transition: 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0px 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* ---------- BUTTONS ---------- */
 .stButton > button {
-    background-color: #1f4037;
-    color: white;
-    border-radius: 8px;
-    height: 45px;
-    width: 100%;
+    background: linear-gradient(to right, #11998e, #38ef7d);
+    border: none;
+    border-radius: 12px;
+    height: 48px;
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 600;
+    color: white;
+    transition: 0.3s ease;
 }
 
 .stButton > button:hover {
-    background-color: #145a32;
+    transform: scale(1.03);
+    background: linear-gradient(to right, #0f9b8e, #00c9ff);
 }
 
-input {
-    border-radius: 6px !important;
+/* ---------- INPUT FIELDS ---------- */
+input, textarea, select {
+    border-radius: 10px !important;
+    border: 1px solid #d1d5db !important;
 }
 
+/* ---------- METRIC CARDS ---------- */
+[data-testid="metric-container"] {
+    background: white;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
+}
+
+/* ---------- DATAFRAME ---------- */
 [data-testid="stDataFrame"] {
-    border-radius: 10px;
-    border: 1px solid #ddd;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0px 4px 20px rgba(0,0,0,0.05);
 }
 
-.card {
-    background-color: white;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
-    margin-bottom: 15px;
-}
-/* Bigger Sidebar Menu */
-section[data-testid="stSidebar"] label {
-    font-size: 18px !important;
-    font-weight: bold;
-}
-
-section[data-testid="stSidebar"] div[role="radiogroup"] > label {
-    padding: 7px 10px !important;
-    margin-bottom: 8px !important;
-    border-radius: 8px;
-}
-
-section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover {
-    background-color: rgba(255,255,255,0.2);
-    cursor: pointer;
-
+/* ---------- DIVIDER ---------- */
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(to right, #11998e, #38ef7d);
+    margin: 25px 0;
 }
 
 </style>
@@ -968,6 +993,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
