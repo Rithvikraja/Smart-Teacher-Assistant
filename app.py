@@ -16,102 +16,78 @@ def get_device_id():
 
 
 # ---------------- PAGE CONFIG ----------------
+st.set_page_config(page_title="Smart Teacher Assistant", layout="wide")
 
 # ---------------- UI STYLING ----------------
 st.markdown("""
 <style>
 
-/* ---------- MAIN BACKGROUND ---------- */
-[data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-    font-family: 'Segoe UI', sans-serif;
+.main {
+    background: linear-gradient(to right, #eef2f3, #ffffff);
 }
 
-/* ---------- SIDEBAR ---------- */
 section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0f2027, #203a43, #2c5364);
-    padding-top: 20px;
+    background: linear-gradient(#1f4037, #99f2c8);
+    color: white;
 }
-
-section[data-testid="stSidebar"] * {
-    color: white !important;
-}
-
-/* ---------- HEADINGS ---------- */
 
 h1 {
-    font-size: 42px !important;
-    font-weight: 700 !important;
+    color: #1f4037;
     text-align: center;
-    background: linear-gradient(to right, #1f4037, #99f2c8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-weight: bold;
 }
+
 h2, h3 {
-    color: #1f2937;
-    font-weight: 600;
+    color: #2c3e50;
+    font-weight: bold;
 }
 
-/* ---------- CARDS ---------- */
-.card {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(15px);
-    padding: 25px;
-    border-radius: 20px;
-    box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.1);
-    margin-bottom: 25px;
-    transition: 0.3s ease-in-out;
-}
-
-.card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0px 12px 35px rgba(0, 0, 0, 0.15);
-}
-
-/* ---------- BUTTONS ---------- */
 .stButton > button {
-    background: linear-gradient(to right, #11998e, #38ef7d);
-    border: none;
-    border-radius: 12px;
-    height: 48px;
-    font-size: 16px;
-    font-weight: 600;
+    background-color: #1f4037;
     color: white;
-    transition: 0.3s ease;
+    border-radius: 8px;
+    height: 45px;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 .stButton > button:hover {
-    transform: scale(1.03);
-    background: linear-gradient(to right, #0f9b8e, #00c9ff);
+    background-color: #145a32;
 }
 
-/* ---------- INPUT FIELDS ---------- */
-input, textarea, select {
-    border-radius: 10px !important;
-    border: 1px solid #d1d5db !important;
+input {
+    border-radius: 6px !important;
 }
 
-/* ---------- METRIC CARDS ---------- */
-[data-testid="metric-container"] {
-    background: white;
-    padding: 15px;
-    border-radius: 15px;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
-}
-
-/* ---------- DATAFRAME ---------- */
 [data-testid="stDataFrame"] {
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0px 4px 20px rgba(0,0,0,0.05);
+    border-radius: 10px;
+    border: 1px solid #ddd;
 }
 
-/* ---------- DIVIDER ---------- */
-hr {
-    border: none;
-    height: 2px;
-    background: linear-gradient(to right, #11998e, #38ef7d);
-    margin: 25px 0;
+.card {
+    background-color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    margin-bottom: 15px;
+}
+/* Bigger Sidebar Menu */
+section[data-testid="stSidebar"] label {
+    font-size: 18px !important;
+    font-weight: bold;
+}
+
+section[data-testid="stSidebar"] div[role="radiogroup"] > label {
+    padding: 7px 10px !important;
+    margin-bottom: 8px !important;
+    border-radius: 8px;
+}
+
+section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover {
+    background-color: rgba(255,255,255,0.2);
+    cursor: pointer;
+
 }
 
 </style>
@@ -785,7 +761,6 @@ def marks():
 
 # ---------------- ANALYTICS ----------------
 def analytics():
-    plt.style.use("ggplot")
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("📈 Academic Performance Analytics")
 
@@ -873,17 +848,14 @@ def analytics():
 
     result_count = temp_data["Result"].value_counts()
 
-    fig1, ax1 = plt.subplots(figsize=(6,6))
-    result_count.plot(
-        kind="pie",
-        autopct='%1.1f%%',
-        ax=ax1,
-        startangle=90
-    )
+    fig1, ax1 = plt.subplots()
+    result_count.plot(kind="pie", autopct='%1.1f%%', ax=ax1)
     ax1.set_ylabel("")
-    ax1.set_title("Pass vs Fail Distribution")
+
     st.pyplot(fig1)
-    
+
+    st.divider()
+
     # ---------------- SUBJECT AVERAGE ----------------
     st.subheader("📚 Subject-wise Average Marks")
 
@@ -935,15 +907,8 @@ def dashboard():
     </div>
     """, unsafe_allow_html=True)
 
-    menu = [
-    "📸 Attendance",
-    "📝 Assignments",
-    "📄 Slip Test",
-    "📊 Marks",
-    "📈 Analytics",
-    "🤖 AI Assistant",
-    "🚪 Logout"
-]
+    menu = ["Attendance", "Assignments", "Slip Test", "Marks", "Analytics", "Chatbot", "Logout"]
+
 
     choice = st.sidebar.radio("Menu", menu)
 
@@ -975,11 +940,11 @@ if "login" not in st.session_state:
     st.session_state.login = False
 
 st.markdown("""
-<div class="card" style="text-align:center;">
-<center><h1> Smart Teacher Assistant</h1>
-<p style="font-size:20px;color:#374151;">
-AI Powered Classroom Management System
-</p></center>
+<div class="card">
+<h1 style="color:green;">🏫 Smart Teacher Assistant</h1>
+<p style="text-align:center;font-size:18px;color:black;">
+AI + Digital Management System for Teachers
+</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1003,18 +968,6 @@ if not st.session_state.login:
 
 else:
     dashboard()
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
