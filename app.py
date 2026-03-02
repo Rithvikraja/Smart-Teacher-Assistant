@@ -16,14 +16,7 @@ def get_device_id():
 
 
 # ---------------- PAGE CONFIG ----------------
-st.markdown("""
-<div class="card" style="text-align:center;">
-<h1>Smart Teacher Assistant</h1>
-<p style="font-size:20px;color:#374151;">
-AI Powered Classroom Management System
-</p>
-</div>
-""", unsafe_allow_html=True)
+
 # ---------------- UI STYLING ----------------
 st.markdown("""
 <style>
@@ -46,7 +39,14 @@ section[data-testid="stSidebar"] * {
 
 /* ---------- HEADINGS ---------- */
 
-
+h1 {
+    font-size: 42px !important;
+    font-weight: 700 !important;
+    text-align: center;
+    background: linear-gradient(to right, #1f4037, #99f2c8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 h2, h3 {
     color: #1f2937;
     font-weight: 600;
@@ -999,6 +999,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
