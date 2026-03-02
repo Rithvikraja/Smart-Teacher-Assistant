@@ -18,7 +18,7 @@ def get_device_id():
 # ---------------- PAGE CONFIG ----------------
 st.markdown("""
 <div class="card" style="text-align:center;">
-<h1>🏫 Smart Teacher Assistant</h1>
+<h1>Smart Teacher Assistant</h1>
 <p style="font-size:20px;color:#374151;">
 AI Powered Classroom Management System
 </p>
@@ -938,8 +938,15 @@ def dashboard():
     </div>
     """, unsafe_allow_html=True)
 
-    menu = ["Attendance", "Assignments", "Slip Test", "Marks", "Analytics", "Chatbot", "Logout"]
-
+    menu = [
+    "📸 Attendance",
+    "📝 Assignments",
+    "📄 Slip Test",
+    "📊 Marks",
+    "📈 Analytics",
+    "🤖 AI Assistant",
+    "🚪 Logout"
+]
 
     choice = st.sidebar.radio("Menu", menu)
 
@@ -999,6 +1006,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
