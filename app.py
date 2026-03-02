@@ -16,8 +16,14 @@ def get_device_id():
 
 
 # ---------------- PAGE CONFIG ----------------
-st.set_page_config(page_title="Smart Teacher Assistant", layout="wide")
-
+st.markdown("""
+<div class="card" style="text-align:center;">
+<h1>🏫 Smart Teacher Assistant</h1>
+<p style="font-size:20px;color:#374151;">
+AI Powered Classroom Management System
+</p>
+</div>
+""", unsafe_allow_html=True)
 # ---------------- UI STYLING ----------------
 st.markdown("""
 <style>
@@ -993,6 +999,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
