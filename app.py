@@ -45,14 +45,7 @@ section[data-testid="stSidebar"] * {
 }
 
 /* ---------- HEADINGS ---------- */
-h1 {
-    font-size: 42px !important;
-    font-weight: 700 !important;
-    text-align: center;
-    background: linear-gradient(to right, #1f4037, #99f2c8);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+
 
 h2, h3 {
     color: #1f2937;
@@ -1006,6 +999,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
