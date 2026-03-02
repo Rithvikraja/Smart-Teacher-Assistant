@@ -785,6 +785,7 @@ def marks():
 
 # ---------------- ANALYTICS ----------------
 def analytics():
+    plt.style.use("ggplot")
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("📈 Academic Performance Analytics")
 
@@ -872,14 +873,17 @@ def analytics():
 
     result_count = temp_data["Result"].value_counts()
 
-    fig1, ax1 = plt.subplots()
-    result_count.plot(kind="pie", autopct='%1.1f%%', ax=ax1)
+    fig1, ax1 = plt.subplots(figsize=(6,6))
+    result_count.plot(
+        kind="pie",
+        autopct='%1.1f%%',
+        ax=ax1,
+        startangle=90
+    )
     ax1.set_ylabel("")
-
+    ax1.set_title("Pass vs Fail Distribution")
     st.pyplot(fig1)
-
-    st.divider()
-
+    
     # ---------------- SUBJECT AVERAGE ----------------
     st.subheader("📚 Subject-wise Average Marks")
 
@@ -999,6 +1003,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
