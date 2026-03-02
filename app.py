@@ -971,10 +971,10 @@ if "login" not in st.session_state:
     st.session_state.login = False
 
 st.markdown("""
-<div class="card">
-<h1 style="color:green;">Smart Teacher Assistant</h1>
-<p style="text-align:center;font-size:18px;color:black;">
-AI + Digital Management System for Teachers
+<div class="card" style="text-align:center;">
+<h1>🏫 Smart Teacher Assistant</h1>
+<p style="font-size:20px;color:#374151;">
+AI Powered Classroom Management System
 </p>
 </div>
 """, unsafe_allow_html=True)
@@ -999,6 +999,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
