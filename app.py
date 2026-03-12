@@ -180,7 +180,10 @@ def check_pass(p, h):
 
 # ---------------- SIGNUP ----------------
 def signup():
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown(
+    "<hr style='margin:5px 0;border:10px solid #1f4037;'>",
+    unsafe_allow_html=True
+    )
     st.subheader("📝 Create Account")
 
     user = normalize_username(st.text_input("Username", key="signup_user"))
@@ -209,7 +212,10 @@ def signup():
 
 # ---------------- LOGIN ----------------
 def login():
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown(
+    "<hr style='margin:5px 0;border:10px solid #1f4037;'>",
+    unsafe_allow_html=True
+    )
     st.subheader("🔐 Login")
 
     user = normalize_username(st.text_input("Username", key="login_user"))
@@ -1059,6 +1065,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
