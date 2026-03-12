@@ -686,7 +686,10 @@ def assignments():
 # ---------------- SLIP TEST ----------------
 def slip_test():
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown(
+    "<hr style='margin:5px 0;border:1px solid #1f4037;'>",
+    unsafe_allow_html=True
+    )
     st.header("📝 Slip-Test")
 
     user = st.session_state.user
@@ -762,7 +765,10 @@ def slip_test():
 
 # ---------------- MARKS ----------------
 def marks():
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown(
+    "<hr style='margin:5px 0;border:1px solid #1f4037;'>",
+    unsafe_allow_html=True
+    )
     st.header("📊 Student Marks Management")
 
     user = st.session_state.user
@@ -842,7 +848,10 @@ def marks():
 
 # ---------------- ANALYTICS ----------------
 def analytics():
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown(
+    "<hr style='margin:5px 0;border:1px solid #1f4037;'>",
+    unsafe_allow_html=True
+    )
     st.header("📈 Academic Performance Analytics")
 
     user = st.session_state.user
@@ -962,7 +971,10 @@ def analytics():
 
 # ---------------- CHATBOT ----------------
 def chatbot():
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown(
+    "<hr style='margin:5px 0;border:1px solid #1f4037;'>",
+    unsafe_allow_html=True
+    )
     st.header("🤖 AI Assistant")
 
     st.subheader("Need Advanced Help?")
@@ -1047,6 +1059,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
