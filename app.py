@@ -310,7 +310,10 @@ def attendance():
 
     st.divider()
 
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown(
+    "<hr style='margin:5px 0;border:10px solid #1f4037;'>",
+    unsafe_allow_html=True
+    )
     st.header("📋 Day-Wise Attendance System")
 
     user = st.session_state.user
@@ -1060,6 +1063,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
