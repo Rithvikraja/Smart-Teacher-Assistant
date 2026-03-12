@@ -279,7 +279,7 @@ def attendance():
     </div>
     """, unsafe_allow_html=True)
     # -------- QR CODE ATTENDANCE --------
-    st.subheader("📸 QR Attendance (Today)")
+    st.subheader("📸 QR Attendance")
 
     qr_date = st.date_input(
     "Select Date for QR Attendance",
@@ -1065,6 +1065,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
