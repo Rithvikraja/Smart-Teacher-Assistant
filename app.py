@@ -242,12 +242,20 @@ def attendance():
     buf = BytesIO()
     qr.save(buf)
 
-    col1, col2, col3 = st.columns([1,2,1])
+    st.markdown(
+    "<h3 style='text-align:center;'>📸 QR Attendance (Today)</h3>",
+    unsafe_allow_html=True
+    )
+
+    col1, col2, col3 = st.columns([2,1,2])
 
     with col2:
       st.image(buf.getvalue(), width=250)
-      st.caption("📸 Students scan this QR to mark attendance")
 
+    st.markdown(
+      "<p style='text-align:center;'>Students scan this QR to mark attendance</p>",
+       unsafe_allow_html=True
+    ) 
     
 
     st.divider()
@@ -991,6 +999,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
