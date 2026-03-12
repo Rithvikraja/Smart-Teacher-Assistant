@@ -17,6 +17,8 @@ def normalize_roll(text):
 
 def normalize_name(text):
     return text.strip().title()
+def normalize_title(text):
+    return text.strip().title()
 
 def get_device_id():
     if "device_id" not in st.session_state:
@@ -533,7 +535,9 @@ def assignments():
 
     roll = normalize_roll(st.text_input("Roll No", key="ass_roll"))
     name = normalize_name(st.text_input("Student Name", key="ass_name"))
-    ass = st.text_input("Assignment Name", key="ass_title")
+    ass = normalize_title(
+       st.text_input("Assignment Name", key="ass_title")
+    )
 
     file = st.file_uploader(
         "Upload File (Optional - Drag & Drop Supported)",
@@ -628,7 +632,9 @@ def slip_test():
 
     st_roll = normalize_roll(st.text_input("Roll No", key="slip_roll_page"))
     st_name = normalize_name(st.text_input("Student Name", key="slip_name_page"))
-    st_title = st.text_input("Slip-Test Title", key="slip_title_page")
+    st_title = normalize_title(
+       st.text_input("Slip-Test Title", key="slip_title_page")
+    )
 
     st_marks = st.selectbox(
     "Slip-Test Marks (0 - 10)",
@@ -707,7 +713,9 @@ def marks():
         name = normalize_name(st.text_input("Student Name", key="marks_name"))
 
     with col2:
-        subject = st.text_input("Subject", key="marks_subject")
+        subject = normalize_title(
+            st.text_input("Subject", key="marks_subject")
+        )
         mark = st.number_input("Marks (0 - 100)", 0, 100, key="marks_value")
 
     if st.button("💾 Save Marks", key="marks_save"):
@@ -977,6 +985,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
