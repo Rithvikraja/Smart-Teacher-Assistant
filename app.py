@@ -977,8 +977,6 @@ if "page" in query:
 
 if not st.session_state.login:
 
-    tab1, tab2 = st.tabs(["Login", "Signup"])
-
     with tab1:
         login()
 
@@ -987,6 +985,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
