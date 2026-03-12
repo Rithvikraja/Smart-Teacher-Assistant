@@ -297,11 +297,6 @@ def attendance():
     buf = BytesIO()
     qr.save(buf)
 
-    st.markdown(
-    "<h3 style='text-align:center;'>📸 QR Attendance</h3>",
-    unsafe_allow_html=True
-    )
-
     col1, col2, col3 = st.columns([2,1,2])
 
     with col2:
@@ -1065,6 +1060,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
