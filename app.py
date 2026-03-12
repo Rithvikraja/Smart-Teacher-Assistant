@@ -976,8 +976,6 @@ def dashboard():
     box-shadow:0px 5px 15px rgba(0,0,0,0.2);
     ">
     👋 Welcome {st.session_state.user}  
-    <br>
-    Smart Classroom Dashboard
     </div>
     """, unsafe_allow_html=True)
     st.sidebar.markdown("## 📚 Teacher Panel")
@@ -1045,6 +1043,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
