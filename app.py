@@ -926,6 +926,7 @@ def dashboard():
     <h2 style="color:gold;">👋 Welcome {st.session_state.user}</h2>
     </div>
     """, unsafe_allow_html=True)
+    st.sidebar.markdown("## 📚 Teacher Panel")
 
     menu = ["Attendance", "Assignments", "Slip Test", "Marks", "Analytics", "Chatbot", "Logout"]
 
@@ -990,6 +991,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
