@@ -98,7 +98,8 @@ section[data-testid="stSidebar"] div[role="radiogroup"] > label {
 section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover {
     background-color: rgba(255,255,255,0.2);
     cursor: pointer;
-/* Animated Gradient Background */
+
+}
 .main {
     background: linear-gradient(-45deg, #1f4037, #99f2c8, #eef2f3, #ffffff);
     background-size: 400% 400%;
@@ -135,9 +136,6 @@ section[data-testid="stSidebar"] div[role="radiogroup"] > label:hover {
 .stButton > button:hover {
     transform: scale(1.03);
 }
-
-}
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -1036,6 +1034,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
