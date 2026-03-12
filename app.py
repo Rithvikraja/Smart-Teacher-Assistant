@@ -687,7 +687,7 @@ def assignments():
 def slip_test():
 
     st.markdown(
-    "<hr style='margin:5px 0;border:1px solid #1f4037;'>",
+    "<hr style='margin:5px 0;border:10px solid #1f4037;'>",
     unsafe_allow_html=True
     )
     st.header("📝 Slip-Test")
@@ -766,7 +766,7 @@ def slip_test():
 # ---------------- MARKS ----------------
 def marks():
     st.markdown(
-    "<hr style='margin:5px 0;border:1px solid #1f4037;'>",
+    "<hr style='margin:5px 0;border:10px solid #1f4037;'>",
     unsafe_allow_html=True
     )
     st.header("📊 Student Marks Management")
@@ -849,7 +849,7 @@ def marks():
 # ---------------- ANALYTICS ----------------
 def analytics():
     st.markdown(
-    "<hr style='margin:5px 0;border:1px solid #1f4037;'>",
+    "<hr style='margin:5px 0;border:10px solid #1f4037;'>",
     unsafe_allow_html=True
     )
     st.header("📈 Academic Performance Analytics")
@@ -972,7 +972,7 @@ def analytics():
 # ---------------- CHATBOT ----------------
 def chatbot():
     st.markdown(
-    "<hr style='margin:5px 0;border:1px solid #1f4037;'>",
+    "<hr style='margin:5px 0;border:10px solid #1f4037;'>",
     unsafe_allow_html=True
     )
     st.header("🤖 AI Assistant")
@@ -1059,6 +1059,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
