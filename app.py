@@ -336,24 +336,23 @@ def attendance():
 
             df = pd.read_csv(ATT_FILE)
 
-            already = df[
-                (df["Username"] == user) &
-                (df["Roll"] == roll) &
-                (df["Date"] == str(selected_date))
-            ]
+            expected_cols = ["Username","Roll","Name","Date","Status","DeviceID"]
 
-            if len(already) > 0:
-                st.warning("Attendance already marked for this day!")
-                return
+            for col in expected_cols:
+                if col not in df.columns:
+                    df[col] = ""
+
+            df = df[expected_cols]
 
             df.loc[len(df)] = [
-               user,
-               roll,
-               name,
-               selected_date,
-               status,
-               ""   # DeviceID placeholder for manual attendance
+                 user,
+                 roll,
+                 name,
+                 selected_date,
+                 status,
+                 ""
             ]
+
             df.to_csv(ATT_FILE, index=False)
 
             st.success("Attendance Saved Successfully")
@@ -1074,6 +1073,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
