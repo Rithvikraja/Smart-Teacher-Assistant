@@ -965,7 +965,7 @@ AI + Digital Management System for Teachers
 </div>
 """, unsafe_allow_html=True)
 
-tab1, tab2 = st.tabs(["Login", "Signup"])
+
 # -------- QR ROUTING --------
 query = st.query_params
 
@@ -977,6 +977,8 @@ if "page" in query:
 
 if not st.session_state.login:
 
+    tab1, tab2 = st.tabs(["Login", "Signup"])
+
     with tab1:
         login()
 
@@ -985,6 +987,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
