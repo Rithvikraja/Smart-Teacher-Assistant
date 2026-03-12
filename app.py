@@ -298,7 +298,7 @@ def attendance():
     qr.save(buf)
 
     st.markdown(
-    "<h3 style='text-align:center;'>📸 QR Attendance (Today)</h3>",
+    "<h3 style='text-align:center;'>📸 QR Attendance</h3>",
     unsafe_allow_html=True
     )
 
@@ -1065,6 +1065,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
