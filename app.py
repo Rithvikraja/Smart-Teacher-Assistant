@@ -585,7 +585,7 @@ def student_attendance():
 # ---------------- ASSIGNMENTS ----------------
 def assignments():
     st.markdown(
-    "<hr style='margin:5px 0;border:10px radius:5px solid #1f4037;'>",
+    "<hr style='margin:5px 0;border:10px border-radius:5px solid #1f4037;'>",
     unsafe_allow_html=True
     )
     st.header("📝 Assignments")
@@ -1047,6 +1047,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
