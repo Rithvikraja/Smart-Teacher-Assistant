@@ -242,7 +242,11 @@ def attendance():
     buf = BytesIO()
     qr.save(buf)
 
-    st.image(buf.getvalue(), width=200)
+    col1, col2, col3 = st.columns([1,2,1])
+
+    with col2:
+      st.image(buf.getvalue(), width=250)
+    st.caption("📸 Students scan this QR to mark attendance")
 
     st.caption("Students scan this QR to mark attendance")
 
@@ -987,6 +991,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
