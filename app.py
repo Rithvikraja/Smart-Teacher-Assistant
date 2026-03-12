@@ -263,6 +263,10 @@ def get_working_days(start_date, end_date, holidays=None):
     return count
 
 # ---------------- ATTENDANCE ----------------
+df = pd.read_csv(ATT_FILE)
+
+if "DeviceID" not in df.columns:
+    df["DeviceID"] = ""
 def attendance():
     st.markdown(f"""
     <div style="
@@ -1070,6 +1074,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
