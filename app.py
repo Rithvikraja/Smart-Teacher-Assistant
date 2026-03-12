@@ -258,6 +258,20 @@ def get_working_days(start_date, end_date, holidays=None):
 
 # ---------------- ATTENDANCE ----------------
 def attendance():
+    st.markdown(f"""
+    <div style="
+    text-align:center;
+    padding:20px;
+    border-radius:15px;
+    background:linear-gradient(90deg,#1f4037,#99f2c8);
+    color:white;
+    font-size:22px;
+    font-weight:bold;
+    box-shadow:0px 5px 15px rgba(0,0,0,0.2);
+    ">
+    👋 Welcome {st.session_state.user}  
+    </div>
+    """, unsafe_allow_html=True)
     # -------- QR CODE ATTENDANCE --------
     st.subheader("📸 QR Attendance (Today)")
 
@@ -964,20 +978,7 @@ def chatbot():
 
 # ---------------- DASHBOARD ----------------
 def dashboard():
-    st.markdown(f"""
-    <div style="
-    text-align:center;
-    padding:20px;
-    border-radius:15px;
-    background:linear-gradient(90deg,#1f4037,#99f2c8);
-    color:white;
-    font-size:22px;
-    font-weight:bold;
-    box-shadow:0px 5px 15px rgba(0,0,0,0.2);
-    ">
-    👋 Welcome {st.session_state.user}  
-    </div>
-    """, unsafe_allow_html=True)
+    
     st.sidebar.markdown("## 📚 Teacher Panel")
 
     menu = ["Attendance", "Assignments", "Slip Test", "Marks", "Analytics", "Chatbot", "Logout"]
@@ -1043,6 +1044,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
