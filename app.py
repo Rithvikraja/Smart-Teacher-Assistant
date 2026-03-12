@@ -8,6 +8,15 @@ from io import BytesIO
 from datetime import date
 import re
 import uuid
+# ---------------- TEXT NORMALIZATION ----------------
+def normalize_username(text):
+    return text.strip().lower()
+
+def normalize_roll(text):
+    return text.strip().upper()
+
+def normalize_name(text):
+    return text.strip().title()
 
 def get_device_id():
     if "device_id" not in st.session_state:
@@ -137,7 +146,7 @@ def signup():
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("📝 Create Account")
 
-    user = st.text_input("Username", key="signup_user")
+    user = normalize_username(st.text_input("Username", key="signup_user"))
     pwd = st.text_input("Password", type="password", key="signup_pwd")
     cpwd = st.text_input("Confirm Password", type="password", key="signup_cpwd")
 
@@ -166,7 +175,7 @@ def login():
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.subheader("🔐 Login")
 
-    user = st.text_input("Username", key="login_user")
+    user = normalize_username(st.text_input("Username", key="login_user"))
     pwd = st.text_input("Password", type="password", key="login_pwd")
 
     if st.button("Login", key="login_btn"):
@@ -247,8 +256,8 @@ def attendance():
 
         selected_date = st.date_input("Select Attendance Date", key="att_date")
 
-        roll = st.text_input("Roll No", key="att_roll")
-        name = st.text_input("Student Name", key="att_name")
+        roll = normalize_roll(st.text_input("Roll No", key="att_roll"))
+        name = normalize_name(st.text_input("Student Name", key="att_name"))
 
         status = st.selectbox("Status", ["Present", "Absent"], key="att_status")
 
@@ -522,8 +531,8 @@ def assignments():
 
 
 
-    roll = st.text_input("Roll No", key="ass_roll")
-    name = st.text_input("Student Name", key="ass_name")
+    roll = normalize_roll(st.text_input("Roll No", key="ass_roll"))
+    name = normalize_name(st.text_input("Student Name", key="ass_name"))
     ass = st.text_input("Assignment Name", key="ass_title")
 
     file = st.file_uploader(
@@ -617,8 +626,8 @@ def slip_test():
     # -------- SUBMIT SLIP TEST --------
     st.subheader("📤 Slip-Test Submission")
 
-    st_roll = st.text_input("Roll No", key="slip_roll_page")
-    st_name = st.text_input("Student Name", key="slip_name_page")
+    st_roll = normalize_roll(st.text_input("Roll No", key="slip_roll_page"))
+    st_name = normalize_name(st.text_input("Student Name", key="slip_name_page"))
     st_title = st.text_input("Slip-Test Title", key="slip_title_page")
 
     st_marks = st.selectbox(
@@ -694,8 +703,8 @@ def marks():
     col1, col2 = st.columns(2)
 
     with col1:
-        roll = st.text_input("Roll No", key="marks_roll")
-        name = st.text_input("Student Name", key="marks_name")
+        roll = normalize_roll(st.text_input("Roll No", key="marks_roll"))
+        name = normalize_name(st.text_input("Student Name", key="marks_name"))
 
     with col2:
         subject = st.text_input("Subject", key="marks_subject")
@@ -968,6 +977,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
