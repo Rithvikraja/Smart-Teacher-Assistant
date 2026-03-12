@@ -342,7 +342,14 @@ def attendance():
                 st.warning("Attendance already marked for this day!")
                 return
 
-            df.loc[len(df)] = [user, roll, name, selected_date, status]
+            df.loc[len(df)] = [
+               user,
+               roll,
+               name,
+               selected_date,
+               status,
+               ""   # DeviceID placeholder for manual attendance
+            ]
             df.to_csv(ATT_FILE, index=False)
 
             st.success("Attendance Saved Successfully")
@@ -1063,6 +1070,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
