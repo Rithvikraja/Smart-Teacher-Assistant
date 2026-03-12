@@ -584,7 +584,10 @@ def student_attendance():
 
 # ---------------- ASSIGNMENTS ----------------
 def assignments():
-    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.markdown(
+    "<hr style='margin:5px 0;border:1px solid #1f4037;'>",
+    unsafe_allow_html=True
+    )
     st.header("📝 Assignments")
 
     user = st.session_state.user
@@ -1044,6 +1047,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
