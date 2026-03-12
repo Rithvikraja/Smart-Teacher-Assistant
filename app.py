@@ -964,11 +964,22 @@ def chatbot():
 
 # ---------------- DASHBOARD ----------------
 def dashboard():
-    st.markdown(f"""
-    <div style="text-align:center;">
-    <h2 style="color:gold;">👋 Welcome {st.session_state.user}</h2>
-    </div>
-    """, unsafe_allow_html=True)
+   st.markdown(f"""
+<div style="
+text-align:center;
+padding:20px;
+border-radius:15px;
+background:linear-gradient(90deg,#1f4037,#99f2c8);
+color:white;
+font-size:22px;
+font-weight:bold;
+box-shadow:0px 5px 15px rgba(0,0,0,0.2);
+">
+👋 Welcome {st.session_state.user}  
+<br>
+Smart Classroom Dashboard
+</div>
+""", unsafe_allow_html=True)
     st.sidebar.markdown("## 📚 Teacher Panel")
 
     menu = ["Attendance", "Assignments", "Slip Test", "Marks", "Analytics", "Chatbot", "Logout"]
@@ -1034,6 +1045,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
