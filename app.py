@@ -922,9 +922,9 @@ def chatbot():
 # ---------------- DASHBOARD ----------------
 def dashboard():
     st.markdown(f"""
-    <div>
+    <div style="text-align:center;">
     <h2 style="color:gold;">👋 Welcome {st.session_state.user}</h2>
-    <p>Smart Classroom Dashboard</p>
+    <p style="font-size:18px;">Smart Classroom Dashboard</p>
     </div>
     """, unsafe_allow_html=True)
 
@@ -991,6 +991,7 @@ if not st.session_state.login:
 
 else:
     dashboard()
+
 
 
 
