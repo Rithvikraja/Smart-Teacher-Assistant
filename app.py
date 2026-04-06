@@ -716,41 +716,36 @@ def slip_test():
 )
 
 
-    st_file = st.file_uploader(
-        "Upload Slip-Test File (Optional)",
-        key="slip_file_page"
-    )
+    
 
     if st.button("Submit Slip-Test", key="slip_btn_page"):
 
     # Validate marks
-      if st_marks < 0 or st_marks > 10:
+     if st_marks < 0 or st_marks > 10:
         st.error("❌ Marks must be between 0 and 10")
         return
 
-      if st_roll.strip() == "" or st_name.strip() == "" or st_title.strip() == "":
+     if st_roll.strip() == "" or st_name.strip() == "" or st_title.strip() == "":
         st.warning("Please fill all fields")
         return
 
-      df = pd.read_csv(SLIP_FILE)
+     df = pd.read_csv(SLIP_FILE)
 
-      if st_file is None:
-        filename = "No File"
-      else:
-        filename = st_file.name
+    # No file now
+     filename = "No File"
 
-      df.loc[len(df)] = [
+     df.loc[len(df)] = [
         user,
         st_roll,
         st_name,
         st_title,
         filename,
         st_marks
-    ]
+     ]
 
-      df.to_csv(SLIP_FILE, index=False)
+     df.to_csv(SLIP_FILE, index=False)
 
-      st.success("✅ Slip-Test Submitted Successfully")
+     st.success("✅ Slip-Test Submitted Successfully")
 
 
     st.divider()
