@@ -25,7 +25,10 @@ def get_device_id():
         st.session_state.device_id = str(uuid.uuid4())
     return st.session_state.device_id
 
-
+# ---------------- ROLL VALIDATION ----------------
+def is_valid_roll(roll):
+    pattern = r"^\d{5}-[A-Za-z]{3}-\d{3}$"
+    return re.match(pattern, roll)
 # ---------------- PAGE CONFIG ----------------
 st.set_page_config(page_title="Smart Teacher Assistant", layout="wide")
 
@@ -333,6 +336,9 @@ def attendance():
         status = st.selectbox("Status", ["Present", "Absent"], key="att_status")
 
         if st.button("Save Attendance", key="att_btn"):
+            if not is_valid_roll(roll):
+                st.error("❌ Invalid Roll No format (Example: 12345-CSE-001)")
+                return
 
             df = pd.read_csv(ATT_FILE)
 
@@ -631,7 +637,10 @@ def assignments():
         df.to_csv(ASSIGN_FILE, index=False)
 
     if st.button("Submit Assignment", key="ass_btn"):
-
+        if not is_valid_roll(roll):
+           st.error("❌ Invalid Roll No format (Example: 12345-CSE-001)")
+           return
+       
     # Validate marks
      if ass_marks < 0 or ass_marks > 10:
         st.error("❌ Marks must be between 0 and 10")
