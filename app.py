@@ -338,6 +338,10 @@ def attendance():
     with col2:
      st.image(buf.getvalue(), width=250)
 
+    # Countdown
+    remaining = QR_EXPIRY - int(time.time() % QR_EXPIRY)
+    st.info(f"⏳ QR refreshes in {remaining} seconds")
+  
     st.caption("🔄 QR refreshes every 20 seconds")
 
 # Safe refresh
@@ -346,6 +350,13 @@ def attendance():
 
     if time.time() - st.session_state.last_refresh > QR_EXPIRY:
      st.session_state.last_refresh = time.time()
+     st.rerun()
+    # Auto refresh logic
+    if "qr_timer" not in st.session_state:
+     st.session_state.qr_timer = time.time()
+
+    if time.time() - st.session_state.qr_timer > QR_EXPIRY:
+     st.session_state.qr_timer = time.time()
      st.rerun()
 
     st.markdown(
