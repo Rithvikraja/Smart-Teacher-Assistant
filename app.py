@@ -728,6 +728,9 @@ def slip_test():
     
 
     if st.button("Submit Slip-Test", key="slip_btn_page"):
+     if not is_valid_roll(st_roll):
+        st.error("❌ Invalid Roll No format (Example: 12345-CSE-001)")
+        return
 
     # Validate marks
      if st_marks < 0 or st_marks > 10:
@@ -799,7 +802,10 @@ def marks():
         mark = st.number_input("Marks (0 - 100)", 0, 100, key="marks_value")
 
     if st.button("💾 Save Marks", key="marks_save"):
-
+        if not is_valid_roll(roll):
+            st.error("❌ Invalid Roll No format (Example: 12345-CSE-001)")
+            return
+ 
         df = pd.read_csv(MARKS_FILE)
 
         # Check if already exists (Update marks)
