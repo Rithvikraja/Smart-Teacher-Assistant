@@ -8,6 +8,8 @@ from io import BytesIO
 from datetime import date
 import re
 import uuid
+import time
+import hashlib
 # ---------------- TEXT NORMALIZATION ----------------
 def normalize_username(text):
     return text.strip().lower()
@@ -24,6 +26,13 @@ def get_device_id():
     if "device_id" not in st.session_state:
         st.session_state.device_id = str(uuid.uuid4())
     return st.session_state.device_id
+def generate_token():
+    current_slot = int(time.time() // QR_EXPIRY)
+    raw = f"{SECRET_KEY}-{current_slot}"
+    return hashlib.sha256(raw.encode()).hexdigest()
+
+SECRET_KEY = "smart_teacher_secret"
+QR_EXPIRY = 20  # seconds
 
 # ---------------- ROLL VALIDATION ----------------
 def is_valid_roll(roll):
@@ -294,13 +303,16 @@ def attendance():
     key="qr_date"
 )
 
-    app_url = f"https://smart-teacher-assistant.streamlit.app/?page=student&date={qr_date}"
+    token = generate_token()
+
+    app_url = f"https://smart-teacher-assistant.streamlit.app/?page=student&date={qr_date}&token={token}"
 
 
     
 
     qr = qrcode.make(app_url)
-
+    time.sleep(20)
+    st.rerun()
     buf = BytesIO()
     qr.save(buf)
 
@@ -522,6 +534,18 @@ def attendance():
 
 # ---------------- STUDENT QR ATTENDANCE ----------------
 def student_attendance():
+    def is_valid_token(token):
+    current_slot = int(time.time() // QR_EXPIRY)
+
+    # Allow small delay tolerance (1 previous slot)
+    for offset in [0, -1]:
+        raw = f"{SECRET_KEY}-{current_slot + offset}"
+        valid = hashlib.sha256(raw.encode()).hexdigest()
+
+        if token == valid:
+            return True
+
+    return False
 
     # Load attendance file
     df = pd.read_csv(ATT_FILE)
@@ -551,7 +575,15 @@ def student_attendance():
 
     # ✅ Create device id BEFORE button
     device_id = get_device_id()
+    query = st.query_params
 
+    if "token" not in query:
+      st.error("Invalid QR Code")
+      return
+
+    if not is_valid_token(query["token"]):
+      st.error("❌ QR Code Expired or Invalid")
+      return
     if st.button("✅ Mark Present"):
 
         if roll.strip() == "" or name.strip() == "":
