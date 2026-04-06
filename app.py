@@ -535,7 +535,7 @@ def attendance():
 # ---------------- STUDENT QR ATTENDANCE ----------------
 def student_attendance():
     def is_valid_token(token):
-    current_slot = int(time.time() // QR_EXPIRY)
+     current_slot = int(time.time() // QR_EXPIRY)
 
     # Allow small delay tolerance (1 previous slot)
     for offset in [0, -1]:
