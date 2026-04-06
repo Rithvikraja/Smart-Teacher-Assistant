@@ -311,15 +311,24 @@ def attendance():
     
 
     qr = qrcode.make(app_url)
-    time.sleep(20)
-    st.rerun()
+
     buf = BytesIO()
     qr.save(buf)
 
     col1, col2, col3 = st.columns([2,1,2])
 
     with col2:
-      st.image(buf.getvalue(), width=250)
+     st.image(buf.getvalue(), width=250)
+
+    st.caption("🔄 QR refreshes every 20 seconds")
+
+# Safe refresh
+    if "last_refresh" not in st.session_state:
+     st.session_state.last_refresh = time.time()
+
+    if time.time() - st.session_state.last_refresh > QR_EXPIRY:
+     st.session_state.last_refresh = time.time()
+     st.rerun()
 
     st.markdown(
       "<p style='text-align:center;'>Students scan this QR to mark attendance</p>",
