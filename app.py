@@ -30,9 +30,27 @@ def generate_token():
     current_slot = int(time.time() // QR_EXPIRY)
     raw = f"{SECRET_KEY}-{current_slot}"
     return hashlib.sha256(raw.encode()).hexdigest()
-
 SECRET_KEY = "smart_teacher_secret"
-QR_EXPIRY = 20  # seconds
+QR_EXPIRY = 20
+
+def generate_token():
+    current_slot = int(time.time() // QR_EXPIRY)
+    raw = f"{SECRET_KEY}-{current_slot}"
+    return hashlib.sha256(raw.encode()).hexdigest()
+
+
+# ✅ ADD HERE
+def is_valid_token(token):
+    current_slot = int(time.time() // QR_EXPIRY)
+
+    for offset in [0, -1]:
+        raw = f"{SECRET_KEY}-{current_slot + offset}"
+        valid = hashlib.sha256(raw.encode()).hexdigest()
+
+        if token == valid:
+            return True
+
+    return False
 
 # ---------------- ROLL VALIDATION ----------------
 def is_valid_roll(roll):
@@ -544,18 +562,7 @@ def attendance():
 # ---------------- STUDENT QR ATTENDANCE ----------------
 def student_attendance():
     query = st.query_params
-    def is_valid_token(token):
-     current_slot = int(time.time() // QR_EXPIRY)
-
-    for offset in [0, -1]:  # allow small delay
-        raw = f"{SECRET_KEY}-{current_slot + offset}"
-        valid = hashlib.sha256(raw.encode()).hexdigest()
-
-        if token == valid:
-            return True
-
-    return False
-
+    
     # Load attendance file
     df = pd.read_csv(ATT_FILE)
 
@@ -575,10 +582,11 @@ def student_attendance():
     if "token" not in query:
        st.error("Invalid QR Code")
        return
-
     if not is_valid_token(query["token"]):
        st.error("❌ QR Code Expired or Invalid")
        return
+
+
 
     att_date = query["date"]
 
