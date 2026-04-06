@@ -543,11 +543,11 @@ def attendance():
 
 # ---------------- STUDENT QR ATTENDANCE ----------------
 def student_attendance():
+    query = st.query_params
     def is_valid_token(token):
-     current_slot = int(time.time() // QR_EXPIRY)
+    current_slot = int(time.time() // QR_EXPIRY)
 
-    # Allow small delay tolerance (1 previous slot)
-    for offset in [0, -1]:
+    for offset in [0, -1]:  # allow small delay
         raw = f"{SECRET_KEY}-{current_slot + offset}"
         valid = hashlib.sha256(raw.encode()).hexdigest()
 
@@ -567,11 +567,18 @@ def student_attendance():
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("📱 Student Attendance (QR Scan)")
 
-    query = st.query_params
+    
 
     if "date" not in query:
         st.error("Invalid QR Code")
         return
+    if "token" not in query:
+       st.error("Invalid QR Code")
+       return
+
+    if not is_valid_token(query["token"]):
+       st.error("❌ QR Code Expired or Invalid")
+       return
 
     att_date = query["date"]
 
@@ -584,7 +591,7 @@ def student_attendance():
 
     # ✅ Create device id BEFORE button
     device_id = get_device_id()
-    query = st.query_params
+    
 
     if "token" not in query:
       st.error("Invalid QR Code")
@@ -599,7 +606,7 @@ def student_attendance():
             st.warning("Please fill all fields")
             return
 
-        if not re.match(pattern, roll):
+        if not is_valid_roll(roll):
             st.error("❌ Invalid Roll No format.")
             return
 
