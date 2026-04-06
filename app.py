@@ -637,9 +637,9 @@ def assignments():
         df.to_csv(ASSIGN_FILE, index=False)
 
     if st.button("Submit Assignment", key="ass_btn"):
-        if not is_valid_roll(roll):
-           st.error("❌ Invalid Roll No format (Example: 12345-CSE-001)")
-           return
+    if not is_valid_roll(roll):
+        st.error("❌ Invalid Roll No format (Example: 12345-CSE-001)")
+        return
        
     # Validate marks
      if ass_marks < 0 or ass_marks > 10:
