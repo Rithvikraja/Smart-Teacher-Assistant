@@ -592,7 +592,7 @@ def student_attendance():
        return
   
 # First-time validation only
-    if "validated" not in st.session_state:
+    
 
     
 
