@@ -545,7 +545,7 @@ def attendance():
 def student_attendance():
     query = st.query_params
     def is_valid_token(token):
-    current_slot = int(time.time() // QR_EXPIRY)
+     current_slot = int(time.time() // QR_EXPIRY)
 
     for offset in [0, -1]:  # allow small delay
         raw = f"{SECRET_KEY}-{current_slot + offset}"
