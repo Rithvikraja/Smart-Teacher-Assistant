@@ -584,13 +584,13 @@ def student_attendance():
        return
   
 # First-time validation only
-   if "validated" not in st.session_state:
+    if "validated" not in st.session_state:
 
-    if "token" not in query:
+     if "token" not in query:
         st.error("Invalid QR Code")
         return
 
-    if not is_valid_token(query["token"]):
+     if not is_valid_token(query["token"]):
         st.error("❌ QR Code Expired or Invalid")
         return
 
