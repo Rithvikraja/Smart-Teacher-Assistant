@@ -325,35 +325,28 @@ def attendance():
 
     app_url = f"https://smart-teacher-assistant.streamlit.app/?page=student&date={qr_date}&token={token}"
 
-
-    
-
     qr = qrcode.make(app_url)
-
     buf = BytesIO()
     qr.save(buf)
 
     col1, col2, col3 = st.columns([2,1,2])
-
     with col2:
      st.image(buf.getvalue(), width=250)
 
-    # Countdown
+# Countdown
     remaining = QR_EXPIRY - int(time.time() % QR_EXPIRY)
     st.info(f"⏳ QR refreshes in {remaining} seconds")
-  
-    st.caption("🔄 QR refreshes every 20 seconds")
 
-# Safe refresh
-    # Progress bar (optional)
     st.progress(remaining / QR_EXPIRY)
 
-# ✅ SINGLE CLEAN AUTO REFRESH
-    if "qr_refresh_time" not in st.session_state:
-     st.session_state.qr_refresh_time = time.time()
+# ✅ PERFECT SYNC REFRESH
+    current_slot = int(time.time() // QR_EXPIRY)
 
-    if time.time() - st.session_state.qr_refresh_time >= QR_EXPIRY:
-     st.session_state.qr_refresh_time = time.time()
+    if "last_slot" not in st.session_state:
+     st.session_state.last_slot = current_slot
+
+    if current_slot != st.session_state.last_slot:
+     st.session_state.last_slot = current_slot
      st.rerun()
 
     st.markdown(
@@ -619,9 +612,14 @@ def student_attendance():
       st.error("Invalid QR Code")
       return
 
-    if not is_valid_token(query["token"]):
-      st.error("❌ QR Code Expired or Invalid")
-      return
+    if "validated" not in st.session_state:
+
+     if not is_valid_token(query["token"]):
+        st.error("❌ QR Code Expired or Invalid")
+        return
+
+    st.session_state.validated = True
+    st.session_state.qr_date = query["date"]
     if st.button("✅ Mark Present"):
 
         if roll.strip() == "" or name.strip() == "":
