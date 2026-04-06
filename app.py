@@ -345,18 +345,15 @@ def attendance():
     st.caption("🔄 QR refreshes every 20 seconds")
 
 # Safe refresh
-    if "last_refresh" not in st.session_state:
-     st.session_state.last_refresh = time.time()
+    # Progress bar (optional)
+    st.progress(remaining / QR_EXPIRY)
 
-    if time.time() - st.session_state.last_refresh > QR_EXPIRY:
-     st.session_state.last_refresh = time.time()
-     st.rerun()
-    # Auto refresh logic
-    if "qr_timer" not in st.session_state:
-     st.session_state.qr_timer = time.time()
+# ✅ SINGLE CLEAN AUTO REFRESH
+    if "qr_refresh_time" not in st.session_state:
+     st.session_state.qr_refresh_time = time.time()
 
-    if time.time() - st.session_state.qr_timer > QR_EXPIRY:
-     st.session_state.qr_timer = time.time()
+    if time.time() - st.session_state.qr_refresh_time >= QR_EXPIRY:
+     st.session_state.qr_refresh_time = time.time()
      st.rerun()
 
     st.markdown(
