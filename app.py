@@ -582,13 +582,25 @@ def student_attendance():
     if "token" not in query:
        st.error("Invalid QR Code")
        return
+  
+# First-time validation only
+   if "validated" not in st.session_state:
+
+    if "token" not in query:
+        st.error("Invalid QR Code")
+        return
+
     if not is_valid_token(query["token"]):
-       st.error("❌ QR Code Expired or Invalid")
-       return
+        st.error("❌ QR Code Expired or Invalid")
+        return
+
+    # ✅ Lock token
+    st.session_state.validated = True
+    st.session_state.qr_date = query["date"]
 
 
 
-    att_date = query["date"]
+    att_date = st.session_state.qr_date
 
     st.write(f"📅 Date: **{att_date}**")
 
@@ -651,6 +663,8 @@ def student_attendance():
         df.to_csv(ATT_FILE, index=False)
 
         st.success("✅ Attendance Marked Successfully")
+        # Reset session (important)
+        st.session_state.validated = False
 
     st.markdown('</div>', unsafe_allow_html=True)
 
