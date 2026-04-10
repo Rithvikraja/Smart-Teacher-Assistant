@@ -593,7 +593,7 @@ def student_attendance():
     
 
 
-    att_date = st.session_state.qr_date
+    att_date = query["date"]
 
     st.write(f"📅 Date: **{att_date}**")
 
@@ -669,7 +669,7 @@ def student_attendance():
 
         st.success("✅ Attendance Marked Successfully")
         # Reset session (important)
-        st.session_state.validated = False
+        
 
     st.markdown('</div>', unsafe_allow_html=True)
 
