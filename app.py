@@ -629,11 +629,14 @@ def student_attendance():
           st.error("❌ QR Code Expired. Please scan new QR.")
           return
             # ✅ Step 2: Prevent reuse of same QR
-        used_token = df[df["Token"] == query["token"]]
+        already_same_token = df[
+           (df["Roll"] == roll) &
+           (df["Token"] == query["token"])
+        ]
 
-        if len(used_token) > 0:
-          st.error("❌ This QR already used")
-          return
+        if len(already_same_token) > 0:
+           st.error("❌ You already marked using this QR")
+           return
 
         if roll.strip() == "" or name.strip() == "":
             st.warning("Please fill all fields")
