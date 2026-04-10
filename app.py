@@ -674,6 +674,13 @@ def student_attendance():
 
         st.success("✅ Attendance Marked Successfully")
         st.toast("✅ Attendance Marked", icon="🎉")
+        st.markdown("""
+<script>
+setTimeout(function() {
+    window.location.href = "about:blank";
+}, 3000);
+</script>
+""", unsafe_allow_html=True)
         # Reset session (important)
         st.session_state.validated = False
 
