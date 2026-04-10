@@ -590,7 +590,15 @@ def student_attendance():
        return
   
 # First-time validation only
-    
+    # ✅ First-time validation (grace for loading)
+    if "validated" not in st.session_state:
+
+      if not is_valid_token(query["token"]):
+        st.error("❌ QR expired while loading. Please rescan.")
+        return
+
+    # Allow user to continue even if token expires later
+      st.session_state.validated = True
 
 
     att_date = query["date"]
@@ -613,9 +621,7 @@ def student_attendance():
     
     if st.button("✅ Mark Present"):
             # ✅ ALWAYS validate token at click time
-        if not is_valid_token(query["token"]):
-          st.error("❌ QR Code Expired. Please scan new QR.")
-          return
+        
             # ✅ Step 2: Prevent reuse of same QR
         already_same_token = df[
            (df["Roll"] == roll) &
