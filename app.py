@@ -184,7 +184,7 @@ if not os.path.exists(USER_FILE):
 
 if not os.path.exists(ATT_FILE):
     pd.DataFrame(
-        columns=["Username", "Roll", "Name", "Date", "Status", "DeviceID"]
+        columns=["Username", "Roll", "Name", "Date", "Status", "DeviceID", "Token"]
     ).to_csv(ATT_FILE, index=False)
 
 
@@ -567,6 +567,9 @@ def attendance():
 
 # ---------------- STUDENT QR ATTENDANCE ----------------
 def student_attendance():
+    if "Token" not in df.columns:
+      df["Token"] = ""
+      df.to_csv(ATT_FILE, index=False)
     query = st.query_params
     
     # Load attendance file
@@ -617,15 +620,18 @@ def student_attendance():
       st.error("Invalid QR Code")
       return
 
-    if "validated" not in st.session_state:
-
-     if not is_valid_token(query["token"]):
-        st.error("❌ QR Code Expired or Invalid")
-        return
-
-    st.session_state.validated = True
-    st.session_state.qr_date = query["date"]
+    
     if st.button("✅ Mark Present"):
+            # ✅ ALWAYS validate token at click time
+        if not is_valid_token(query["token"]):
+          st.error("❌ QR Code Expired. Please scan new QR.")
+          return
+            # ✅ Step 2: Prevent reuse of same QR
+        used_token = df[df["Token"] == query["token"]]
+
+        if len(used_token) > 0:
+          st.error("❌ This QR already used")
+          return
 
         if roll.strip() == "" or name.strip() == "":
             st.warning("Please fill all fields")
@@ -663,6 +669,7 @@ def student_attendance():
             att_date,
             "Present",
             device_id
+            query["token"]
         ]
 
         df.to_csv(ATT_FILE, index=False)
