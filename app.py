@@ -10,6 +10,7 @@ import re
 import uuid
 import time
 import hashlib
+from streamlit_autorefresh import st_autorefresh
 # ---------------- TEXT NORMALIZATION ----------------
 def normalize_username(text):
     return text.strip().lower()
@@ -348,6 +349,15 @@ def attendance():
     if current_slot != st.session_state.last_slot:
      st.session_state.last_slot = current_slot
      st.rerun()
+
+    # Refresh every 1 second
+    st_autorefresh(interval=1000, key="qr_refresh")
+
+    remaining = QR_EXPIRY - int(time.time() % QR_EXPIRY)
+ 
+    st.info(f"⏳ QR refreshes in {remaining} seconds")
+
+    st.progress(remaining / QR_EXPIRY)
 
     st.markdown(
       "<p style='text-align:center;'>Students scan this QR to mark attendance</p>",
