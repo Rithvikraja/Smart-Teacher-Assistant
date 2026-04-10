@@ -567,13 +567,15 @@ def attendance():
 
 # ---------------- STUDENT QR ATTENDANCE ----------------
 def student_attendance():
+    query = st.query_params
+    df = pd.read_csv(ATT_FILE)
     if "Token" not in df.columns:
       df["Token"] = ""
       df.to_csv(ATT_FILE, index=False)
-    query = st.query_params
+  
     
     # Load attendance file
-    df = pd.read_csv(ATT_FILE)
+   
 
     # Add DeviceID column if missing (old file fix)
     if "DeviceID" not in df.columns:
