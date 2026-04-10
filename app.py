@@ -34,12 +34,6 @@ def generate_token():
 SECRET_KEY = "smart_teacher_secret"
 QR_EXPIRY = 20
 
-def generate_token():
-    current_slot = int(time.time() // QR_EXPIRY)
-    raw = f"{SECRET_KEY}-{current_slot}"
-    return hashlib.sha256(raw.encode()).hexdigest()
-
-
 # ✅ ADD HERE
 def is_valid_token(token):
     current_slot = int(time.time() // QR_EXPIRY)
