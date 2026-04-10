@@ -668,7 +668,7 @@ def student_attendance():
             name,
             att_date,
             "Present",
-            device_id
+            device_id,
             query["token"]
         ]
 
