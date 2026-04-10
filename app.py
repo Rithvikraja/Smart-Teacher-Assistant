@@ -381,7 +381,7 @@ def attendance():
 
             df = pd.read_csv(ATT_FILE)
 
-            expected_cols = ["Username","Roll","Name","Date","Status","DeviceID"]
+            expected_cols = ["Username","Roll","Name","Date","Status","DeviceID","Token"]
 
             for col in expected_cols:
                 if col not in df.columns:
@@ -395,6 +395,7 @@ def attendance():
                  name,
                  selected_date,
                  status,
+                 "",
                  ""
             ]
 
