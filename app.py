@@ -591,13 +591,6 @@ def student_attendance():
 # First-time validation only
     
 
-    
-
-    # ✅ Lock token
-    st.session_state.validated = True
-    st.session_state.qr_date = query["date"]
-
-
 
     att_date = st.session_state.qr_date
 
