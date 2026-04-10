@@ -668,6 +668,7 @@ def student_attendance():
         df.to_csv(ATT_FILE, index=False)
 
         st.success("✅ Attendance Marked Successfully")
+        st.balloons()
         # Reset session (important)
         
 
