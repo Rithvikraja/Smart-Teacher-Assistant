@@ -34,6 +34,8 @@ def generate_token():
 SECRET_KEY = "smart_teacher_secret"
 QR_EXPIRY = 20
 
+
+
 # ✅ ADD HERE
 def is_valid_token(token):
     current_slot = int(time.time() // QR_EXPIRY)
@@ -381,7 +383,7 @@ def attendance():
 
             df = pd.read_csv(ATT_FILE)
 
-            expected_cols = ["Username","Roll","Name","Date","Status","DeviceID","Token"]
+            expected_cols = ["Username","Roll","Name","Date","Status","DeviceID"]
 
             for col in expected_cols:
                 if col not in df.columns:
@@ -395,7 +397,6 @@ def attendance():
                  name,
                  selected_date,
                  status,
-                 "",
                  ""
             ]
 
@@ -590,18 +591,17 @@ def student_attendance():
        return
   
 # First-time validation only
-    # ✅ First-time validation (grace for loading)
-    if "validated" not in st.session_state:
+    
 
-      if not is_valid_token(query["token"]):
-        st.error("❌ QR expired while loading. Please rescan.")
-        return
+    
 
-    # Allow user to continue even if token expires later
-      st.session_state.validated = True
+    # ✅ Lock token
+    st.session_state.validated = True
+    st.session_state.qr_date = query["date"]
 
 
-    att_date = query["date"]
+
+    att_date = st.session_state.qr_date
 
     st.write(f"📅 Date: **{att_date}**")
 
@@ -621,16 +621,15 @@ def student_attendance():
     
     if st.button("✅ Mark Present"):
             # ✅ ALWAYS validate token at click time
-        
+        if not is_valid_token(query["token"]):
+          st.error("❌ QR Code Expired. Please scan new QR.")
+          return
             # ✅ Step 2: Prevent reuse of same QR
-        already_same_token = df[
-           (df["Roll"] == roll) &
-           (df["Token"] == query["token"])
-        ]
+        used_token = df[df["Token"] == query["token"]]
 
-        if len(already_same_token) > 0:
-           st.error("❌ You already marked using this QR")
-           return
+        if len(used_token) > 0:
+          st.error("❌ This QR already used")
+          return
 
         if roll.strip() == "" or name.strip() == "":
             st.warning("Please fill all fields")
@@ -674,9 +673,8 @@ def student_attendance():
         df.to_csv(ATT_FILE, index=False)
 
         st.success("✅ Attendance Marked Successfully")
-        st.toast("✅ Attendance Marked", icon="🎉")
         # Reset session (important)
-        
+        st.session_state.validated = False
 
     st.markdown('</div>', unsafe_allow_html=True)
 
