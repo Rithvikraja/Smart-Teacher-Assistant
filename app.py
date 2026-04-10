@@ -673,6 +673,7 @@ def student_attendance():
         df.to_csv(ATT_FILE, index=False)
 
         st.success("✅ Attendance Marked Successfully")
+        st.toast("✅ Attendance Marked", icon="🎉")
         # Reset session (important)
         st.session_state.validated = False
 
