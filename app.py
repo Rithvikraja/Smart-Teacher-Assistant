@@ -681,7 +681,7 @@ def student_attendance():
 
      st.success("✅ Attendance Marked Successfully")
      st.toast("✅ Attendance Marked", icon="🎉")
-        st.markdown("""
+     st.markdown("""
 <script>
 setTimeout(function() {
     window.location.href = "about:blank";
