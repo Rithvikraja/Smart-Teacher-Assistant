@@ -650,12 +650,12 @@ def student_attendance():
      if len(device_data) > 0:
          existing_roll = device_data.iloc[0]["Roll"]
 
-           if existing_roll == roll:
+         if existing_roll == roll:
               st.warning("⚠️ You already marked attendance")
-           else:
+         else:
               st.error(f"❌ This device already used for Roll: {existing_roll}")
     
-              return
+         return
      # 🔥 4. ADD THIS (Device → Roll binding)
      device_roll_check = df[
         (df["DeviceID"] == device_id) &
