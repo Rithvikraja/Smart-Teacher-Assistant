@@ -689,7 +689,7 @@ setTimeout(function() {
 </script>
 """, unsafe_allow_html=True)
         # Reset session (important)
-        st.session_state.validated = False
+     st.session_state.validated = False
 
     st.markdown('</div>', unsafe_allow_html=True)
 
