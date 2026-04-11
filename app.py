@@ -632,25 +632,25 @@ def student_attendance():
     if st.button("✅ Mark Present"):
 
     # ✅ 1. Token validation
-    if not is_valid_token(query["token"]):
+     if not is_valid_token(query["token"]):
         st.error("❌ QR Code Expired. Please scan new QR.")
         return
 
     # ❌ 2. Prevent QR reuse
-    if len(df[df["Token"] == query["token"]]) > 0:
+     if len(df[df["Token"] == query["token"]]) > 0:
         st.error("❌ This QR already used")
         return
 
     # ❌ 3. Device restriction (ONLY ONCE)
-    if len(df[
+     if len(df[
         (df["DeviceID"] == device_id) &
         (df["Date"] == str(att_date))
-    ]) > 0:
+     ]) > 0:
         st.error("❌ This device already marked attendance today")
         return
 
     # ❌ 4. Roll restriction (ONLY ONCE)
-    if len(df[
+     if len(df[
         (df["Roll"] == roll) &
         (df["Date"] == str(att_date))
     ]) > 0:
@@ -658,16 +658,16 @@ def student_attendance():
         return
 
     # ✅ 5. Validate input
-    if roll.strip() == "" or name.strip() == "":
+     if roll.strip() == "" or name.strip() == "":
         st.warning("Please fill all fields")
         return
 
-    if not is_valid_roll(roll):
+     if not is_valid_roll(roll):
         st.error("❌ Invalid Roll No format.")
         return
 
     # ✅ 6. Save
-    df.loc[len(df)] = [
+     df.loc[len(df)] = [
         "QR-STUDENT",
         roll,
         name,
@@ -675,12 +675,12 @@ def student_attendance():
         "Present",
         device_id,
         query["token"]
-    ]
+     ]
 
-    df.to_csv(ATT_FILE, index=False)
+     df.to_csv(ATT_FILE, index=False)
 
-    st.success("✅ Attendance Marked Successfully")
-    st.toast("✅ Attendance Marked", icon="🎉")
+     st.success("✅ Attendance Marked Successfully")
+     st.toast("✅ Attendance Marked", icon="🎉")
         st.markdown("""
 <script>
 setTimeout(function() {
