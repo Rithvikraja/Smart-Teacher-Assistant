@@ -630,78 +630,57 @@ def student_attendance():
 
     
     if st.button("✅ Mark Present"):
-            # ✅ ALWAYS validate token at click time
-        if not is_valid_token(query["token"]):
-          st.error("❌ QR Code Expired. Please scan new QR.")
-          return
-            # ✅ Step 2: Prevent reuse of same QR
-        used_token = df[df["Token"] == query["token"]]
 
-        if len(used_token) > 0:
-          st.error("❌ This QR already used")
-          return
+    # ✅ 1. Token validation
+    if not is_valid_token(query["token"]):
+        st.error("❌ QR Code Expired. Please scan new QR.")
+        return
 
-        if roll.strip() == "" or name.strip() == "":
-            st.warning("Please fill all fields")
-            return
+    # ❌ 2. Prevent QR reuse
+    if len(df[df["Token"] == query["token"]]) > 0:
+        st.error("❌ This QR already used")
+        return
 
-        if not is_valid_roll(roll):
-            st.error("❌ Invalid Roll No format.")
-            return
+    # ❌ 3. Device restriction (ONLY ONCE)
+    if len(df[
+        (df["DeviceID"] == device_id) &
+        (df["Date"] == str(att_date))
+    ]) > 0:
+        st.error("❌ This device already marked attendance today")
+        return
 
-        # ❌ Check same phone
-        phone_used = df[
-            (df["DeviceID"] == device_id) &
-            (df["Date"] == str(att_date))
-        ]
+    # ❌ 4. Roll restriction (ONLY ONCE)
+    if len(df[
+        (df["Roll"] == roll) &
+        (df["Date"] == str(att_date))
+    ]) > 0:
+        st.warning("⚠️ Attendance already marked for this Roll Number")
+        return
 
-        if len(phone_used) > 0:
-            st.error("❌ This phone already marked attendance today")
-            return
-        # ❌ Check same device usage (STRICT)
-        device_used = df[
-            (df["DeviceID"] == device_id) &
-            (df["Date"] == str(att_date))
-        ]
+    # ✅ 5. Validate input
+    if roll.strip() == "" or name.strip() == "":
+        st.warning("Please fill all fields")
+        return
 
-        if len(device_used) > 0:
-           st.error("❌ This device already marked attendance today")
-           return
+    if not is_valid_roll(roll):
+        st.error("❌ Invalid Roll No format.")
+        return
 
-        # ❌ Check same student
-        already = df[
-            (df["Roll"] == roll) &
-            (df["Date"] == str(att_date))
-        ]
+    # ✅ 6. Save
+    df.loc[len(df)] = [
+        "QR-STUDENT",
+        roll,
+        name,
+        att_date,
+        "Present",
+        device_id,
+        query["token"]
+    ]
 
-        if len(already) > 0:
-            st.info("Attendance already marked")
-            return
-        # ❌ Check same student (ROLL NUMBER restriction)
-        already_marked = df[
-           (df["Roll"] == roll) &
-           (df["Date"] == str(att_date))
-        ]
+    df.to_csv(ATT_FILE, index=False)
 
-        if len(already_marked) > 0:
-            st.warning("⚠️ Attendance already marked for this Roll Number")
-            return
-  
-        # ✅ Save
-        df.loc[len(df)] = [
-            "QR-STUDENT",
-            roll,
-            name,
-            att_date,
-            "Present",
-            device_id,
-            query["token"]
-        ]
-
-        df.to_csv(ATT_FILE, index=False)
-
-        st.success("✅ Attendance Marked Successfully")
-        st.toast("✅ Attendance Marked", icon="🎉")
+    st.success("✅ Attendance Marked Successfully")
+    st.toast("✅ Attendance Marked", icon="🎉")
         st.markdown("""
 <script>
 setTimeout(function() {
