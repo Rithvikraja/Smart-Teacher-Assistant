@@ -648,6 +648,18 @@ def student_attendance():
      ]) > 0:
         st.error("❌ This device already marked attendance today")
         return
+     # 🔥 4. ADD THIS (Device → Roll binding)
+     device_roll_check = df[
+        (df["DeviceID"] == device_id) &
+        (df["Date"] == str(att_date))
+     ]
+
+     if len(device_roll_check) > 0:
+        existing_roll = device_roll_check.iloc[0]["Roll"]
+
+        if existing_roll != roll:
+            st.error(f"❌ This device already used for Roll: {existing_roll}")
+            return
 
     # ❌ 4. Roll restriction (ONLY ONCE)
      if len(df[
