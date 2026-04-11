@@ -641,13 +641,21 @@ def student_attendance():
         st.error("❌ This QR already used")
         return
 
-    # ❌ 3. Device restriction (ONLY ONCE)
-     if len(df[
-        (df["DeviceID"] == device_id) &
-        (df["Date"] == str(att_date))
-     ]) > 0:
-        st.error("❌ This device already marked attendance today")
-        return
+    
+     device_data = df[
+       (df["DeviceID"] == device_id) &
+       (df["Date"] == str(att_date))
+     ]
+
+     if len(device_data) > 0:
+         existing_roll = device_data.iloc[0]["Roll"]
+
+           if existing_roll == roll:
+              st.warning("⚠️ You already marked attendance")
+           else:
+              st.error(f"❌ This device already used for Roll: {existing_roll}")
+    
+              return
      # 🔥 4. ADD THIS (Device → Roll binding)
      device_roll_check = df[
         (df["DeviceID"] == device_id) &
