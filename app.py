@@ -25,7 +25,17 @@ def normalize_title(text):
 
 def get_device_id():
     if "device_id" not in st.session_state:
-        st.session_state.device_id = str(uuid.uuid4())
+        # Check if device_id already exists in URL
+        if "device_id" in st.query_params:
+            st.session_state.device_id = st.query_params["device_id"]
+        else:
+            # Create new device ID
+            new_id = str(uuid.uuid4())
+            st.session_state.device_id = new_id
+
+            # Store in URL (acts like persistent storage)
+            st.query_params["device_id"] = new_id
+
     return st.session_state.device_id
 def generate_token():
     current_slot = int(time.time() // QR_EXPIRY)
@@ -648,6 +658,15 @@ def student_attendance():
         if len(phone_used) > 0:
             st.error("❌ This phone already marked attendance today")
             return
+        # ❌ Check same device usage (STRICT)
+        device_used = df[
+            (df["DeviceID"] == device_id) &
+            (df["Date"] == str(att_date))
+        ]
+
+        if len(device_used) > 0:
+           st.error("❌ This device already marked attendance today")
+           return
 
         # ❌ Check same student
         already = df[
@@ -658,7 +677,16 @@ def student_attendance():
         if len(already) > 0:
             st.info("Attendance already marked")
             return
+        # ❌ Check same student (ROLL NUMBER restriction)
+        already_marked = df[
+           (df["Roll"] == roll) &
+           (df["Date"] == str(att_date))
+        ]
 
+        if len(already_marked) > 0:
+            st.warning("⚠️ Attendance already marked for this Roll Number")
+            return
+  
         # ✅ Save
         df.loc[len(df)] = [
             "QR-STUDENT",
