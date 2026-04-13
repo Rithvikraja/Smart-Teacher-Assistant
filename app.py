@@ -622,9 +622,7 @@ def student_attendance():
          name = st.text_input("Student Name")
     else:
          st.success("✅ Attendance already submitted from this device")
-    if not st.session_state.submitted:
-       if st.button("✅ Mark Present"):
-            st.session_state.submitted = True
+    
     pattern = r"^\d{5}-[A-Za-z]{3}-\d{3}$"
 
     # ✅ Create device id BEFORE button
@@ -636,78 +634,69 @@ def student_attendance():
       return
 
     
+    if not st.session_state.submitted:
     if st.button("✅ Mark Present"):
 
-    # ✅ 1. Token validation
-     if not is_valid_token(query["token"]):
-        st.error("❌ QR Code Expired. Please scan new QR.")
-        return
-
-    # ❌ 2. Prevent QR reuse
-     if len(df[df["Token"] == query["token"]]) > 0:
-        st.error("❌ This QR already used")
-        return
-
-    
-     device_data = df[
-       (df["DeviceID"] == device_id) &
-       (df["Date"] == str(att_date))
-     ]
-
-     if len(device_data) > 0:
-         existing_roll = device_data.iloc[0]["Roll"]
-
-         if existing_roll == roll:
-              st.warning("⚠️ You already marked attendance")
-         else:
-              st.error(f"❌ This device already used for Roll: {existing_roll}")
-    
-         return
-     # 🔥 4. ADD THIS (Device → Roll binding)
-     device_roll_check = df[
-        (df["DeviceID"] == device_id) &
-        (df["Date"] == str(att_date))
-     ]
-
-     if len(device_roll_check) > 0:
-        existing_roll = device_roll_check.iloc[0]["Roll"]
-
-        if existing_roll != roll:
-            st.error(f"❌ This device already used for Roll: {existing_roll}")
+        # ✅ 1. Token validation
+        if not is_valid_token(query["token"]):
+            st.error("❌ QR Code Expired. Please scan new QR.")
             return
 
-    # ❌ 4. Roll restriction (ONLY ONCE)
-     if len(df[
-        (df["Roll"] == roll) &
-        (df["Date"] == str(att_date))
-    ]) > 0:
-        st.warning("⚠️ Attendance already marked for this Roll Number")
-        return
+        # ❌ 2. Prevent QR reuse
+        if len(df[df["Token"] == query["token"]]) > 0:
+            st.error("❌ This QR already used")
+            return
 
-    # ✅ 5. Validate input
-     if roll.strip() == "" or name.strip() == "":
-        st.warning("Please fill all fields")
-        return
+        # ❌ 3. Device + Roll binding
+        device_data = df[
+            (df["DeviceID"] == device_id) &
+            (df["Date"] == str(att_date))
+        ]
 
-     if not is_valid_roll(roll):
-        st.error("❌ Invalid Roll No format.")
-        return
+        if len(device_data) > 0:
+            existing_roll = device_data.iloc[0]["Roll"]
 
-    # ✅ 6. Save
-     df.loc[len(df)] = [
-        "QR-STUDENT",
-        roll,
-        name,
-        att_date,
-        "Present",
-        device_id,
-        query["token"]
-     ]
+            if existing_roll == roll:
+                st.warning("⚠️ You already marked attendance")
+            else:
+                st.error(f"❌ This device already used for Roll: {existing_roll}")
+            return
 
-     df.to_csv(ATT_FILE, index=False)
+        # ❌ 4. Roll restriction
+        if len(df[
+            (df["Roll"] == roll) &
+            (df["Date"] == str(att_date))
+        ]) > 0:
+            st.warning("⚠️ Attendance already marked for this Roll Number")
+            return
 
-     st.success("✅ Attendance Marked Successfully")
-     st.toast("✅ Attendance Marked", icon="🎉")
+        # ✅ 5. Validate input
+        if roll.strip() == "" or name.strip() == "":
+            st.warning("Please fill all fields")
+            return
+
+        if not is_valid_roll(roll):
+            st.error("❌ Invalid Roll No format.")
+            return
+
+        # ✅ 6. Save
+        df.loc[len(df)] = [
+            "QR-STUDENT",
+            roll,
+            name,
+            att_date,
+            "Present",
+            device_id,
+            query["token"]
+        ]
+
+        df.to_csv(ATT_FILE, index=False)
+
+        st.success("✅ Attendance Marked Successfully")
+        st.toast("✅ Attendance Marked", icon="🎉")
+
+        # 🔥 IMPORTANT (lock UI)
+        st.session_state.submitted = True
      st.markdown("""
 <script>
 setTimeout(function() {
