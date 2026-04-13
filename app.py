@@ -1166,7 +1166,7 @@ st.markdown("""
 AI + Digital Management System for Teachers
 </p>
 </div>
-""", unsafe_allow_html=True)
+"", unsafe_allow_html=True)
 
 
 # -------- QR ROUTING --------
