@@ -616,6 +616,7 @@ def student_attendance():
     att_date = st.session_state.qr_date
 
     st.write(f"📅 Date: **{att_date}**")
+    st.info("⏳ You can take your time to fill details. QR already validated ✅")
 
     if not st.session_state.submitted:
          roll = st.text_input("Roll No")
@@ -638,10 +639,17 @@ def student_attendance():
      if st.button("✅ Mark Present"):
 
         # ✅ 1. Token validation
-        if not is_valid_token(query["token"]):
-            st.error("❌ QR Code Expired. Please scan new QR.")
-            return
+        # ✅ First-time validation only
+       if "validated" not in st.session_state:
 
+           if not is_valid_token(query["token"]):
+               st.error("❌ QR Code Expired. Please scan again.")
+               return
+
+    # ✅ Save token permanently for this session
+           st.session_state.validated = True
+           st.session_state.saved_token = query["token"]
+ 
         # ❌ 2. Prevent QR reuse
         if len(df[df["Token"] == query["token"]]) > 0:
             st.error("❌ This QR already used")
@@ -698,12 +706,7 @@ def student_attendance():
         # 🔥 IMPORTANT (lock UI)
         st.session_state.submitted = True
      st.markdown("""
-<script>
-setTimeout(function() {
-    window.location.href = "about:blank";
-}, 3000);
-</script>
-""", unsafe_allow_html=True)
+
         # Reset session (important)
      
      st.session_state.validated = False
