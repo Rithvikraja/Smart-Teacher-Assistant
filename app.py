@@ -635,7 +635,7 @@ def student_attendance():
 
     
     if not st.session_state.submitted:
-    if st.button("✅ Mark Present"):
+     if st.button("✅ Mark Present"):
 
         # ✅ 1. Token validation
         if not is_valid_token(query["token"]):
