@@ -573,6 +573,8 @@ def attendance():
 
 # ---------------- STUDENT QR ATTENDANCE ----------------
 def student_attendance():
+    if "submitted" not in st.session_state:
+        st.session_state.submitted = False
     query = st.query_params
     df = pd.read_csv(ATT_FILE)
     if "Token" not in df.columns:
@@ -615,9 +617,14 @@ def student_attendance():
 
     st.write(f"📅 Date: **{att_date}**")
 
-    roll = st.text_input("Roll No")
-    name = st.text_input("Student Name")
-
+    if not st.session_state.submitted:
+         roll = st.text_input("Roll No")
+         name = st.text_input("Student Name")
+    else:
+         st.success("✅ Attendance already submitted from this device")
+    if not st.session_state.submitted:
+       if st.button("✅ Mark Present"):
+            st.session_state.submitted = True
     pattern = r"^\d{5}-[A-Za-z]{3}-\d{3}$"
 
     # ✅ Create device id BEFORE button
@@ -709,6 +716,7 @@ setTimeout(function() {
 </script>
 """, unsafe_allow_html=True)
         # Reset session (important)
+     
      st.session_state.validated = False
 
     st.markdown('</div>', unsafe_allow_html=True)
