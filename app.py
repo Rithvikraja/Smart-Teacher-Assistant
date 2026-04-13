@@ -640,7 +640,7 @@ def student_attendance():
 
         # ✅ 1. Token validation
         # ✅ First-time validation only
-       if "validated" not in st.session_state:
+        if "validated" not in st.session_state:
 
            if not is_valid_token(query["token"]):
                st.error("❌ QR Code Expired. Please scan again.")
