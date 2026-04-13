@@ -575,143 +575,110 @@ def attendance():
 def student_attendance():
     if "submitted" not in st.session_state:
         st.session_state.submitted = False
+
     query = st.query_params
     df = pd.read_csv(ATT_FILE)
-    if "Token" not in df.columns:
-      df["Token"] = ""
-      df.to_csv(ATT_FILE, index=False)
-  
-    
-    # Load attendance file
-   
 
-    # Add DeviceID column if missing (old file fix)
+    # Fix columns if missing
+    if "Token" not in df.columns:
+        df["Token"] = ""
     if "DeviceID" not in df.columns:
         df["DeviceID"] = ""
-        df.to_csv(ATT_FILE, index=False)
+    df.to_csv(ATT_FILE, index=False)
 
     st.markdown('<div class="card">', unsafe_allow_html=True)
     st.header("📱 Student Attendance (QR Scan)")
 
-    
-
-    if "date" not in query:
+    # ❌ Invalid QR
+    if "date" not in query or "token" not in query:
         st.error("Invalid QR Code")
         return
-    if "token" not in query:
-       st.error("Invalid QR Code")
-       return
-  
-# First-time validation only
-    
 
-    
+    # ✅ FIRST TIME VALIDATION ONLY
+    if "validated" not in st.session_state:
+        if not is_valid_token(query["token"]):
+            st.error("❌ QR Code Expired. Please scan again.")
+            return
 
-    # ✅ Lock token
-    st.session_state.validated = True
-    st.session_state.qr_date = query["date"]
-
-
+        st.session_state.validated = True
+        st.session_state.saved_token = query["token"]
+        st.session_state.qr_date = query["date"]
 
     att_date = st.session_state.qr_date
 
     st.write(f"📅 Date: **{att_date}**")
-    st.info("⏳ You can take your time to fill details. QR already validated ✅")
+    st.success("✅ QR Verified! You can take your time.")
 
+    # Input fields
     if not st.session_state.submitted:
-         roll = st.text_input("Roll No")
-         name = st.text_input("Student Name")
+        roll = st.text_input("Roll No")
+        name = st.text_input("Student Name")
     else:
-         st.success("✅ Attendance already submitted from this device")
-    
-    pattern = r"^\d{5}-[A-Za-z]{3}-\d{3}$"
+        st.success("✅ Attendance already submitted from this device")
 
-    # ✅ Create device id BEFORE button
     device_id = get_device_id()
-    
 
-    if "token" not in query:
-      st.error("Invalid QR Code")
-      return
-
-    
+    # ✅ BUTTON
     if not st.session_state.submitted:
-     if st.button("✅ Mark Present"):
+        if st.button("✅ Mark Present"):
 
-        # ✅ 1. Token validation
-        # ✅ First-time validation only
-        if "validated" not in st.session_state:
+            # ❌ Prevent QR reuse
+            if len(df[df["Token"] == st.session_state.saved_token]) > 0:
+                st.error("❌ This QR already used")
+                return
 
-           if not is_valid_token(query["token"]):
-               st.error("❌ QR Code Expired. Please scan again.")
-               return
+            # ❌ Device restriction
+            device_data = df[
+                (df["DeviceID"] == device_id) &
+                (df["Date"] == str(att_date))
+            ]
 
-    # ✅ Save token permanently for this session
-           st.session_state.validated = True
-           st.session_state.saved_token = query["token"]
- 
-        # ❌ 2. Prevent QR reuse
-        if len(df[df["Token"] == query["token"]]) > 0:
-            st.error("❌ This QR already used")
-            return
+            if len(device_data) > 0:
+                existing_roll = device_data.iloc[0]["Roll"]
 
-        # ❌ 3. Device + Roll binding
-        device_data = df[
-            (df["DeviceID"] == device_id) &
-            (df["Date"] == str(att_date))
-        ]
+                if existing_roll == roll:
+                    st.warning("⚠️ You already marked attendance")
+                else:
+                    st.error(f"❌ Device already used for Roll: {existing_roll}")
+                return
 
-        if len(device_data) > 0:
-            existing_roll = device_data.iloc[0]["Roll"]
+            # ❌ Roll restriction
+            if len(df[
+                (df["Roll"] == roll) &
+                (df["Date"] == str(att_date))
+            ]) > 0:
+                st.warning("⚠️ Attendance already marked for this Roll")
+                return
 
-            if existing_roll == roll:
-                st.warning("⚠️ You already marked attendance")
-            else:
-                st.error(f"❌ This device already used for Roll: {existing_roll}")
-            return
+            # ✅ Validate input
+            if roll.strip() == "" or name.strip() == "":
+                st.warning("Please fill all fields")
+                return
 
-        # ❌ 4. Roll restriction
-        if len(df[
-            (df["Roll"] == roll) &
-            (df["Date"] == str(att_date))
-        ]) > 0:
-            st.warning("⚠️ Attendance already marked for this Roll Number")
-            return
+            if not is_valid_roll(roll):
+                st.error("❌ Invalid Roll No format")
+                return
 
-        # ✅ 5. Validate input
-        if roll.strip() == "" or name.strip() == "":
-            st.warning("Please fill all fields")
-            return
+            # ✅ SAVE
+            df.loc[len(df)] = [
+                "QR-STUDENT",
+                roll,
+                name,
+                att_date,
+                "Present",
+                device_id,
+                st.session_state.saved_token
+            ]
 
-        if not is_valid_roll(roll):
-            st.error("❌ Invalid Roll No format.")
-            return
+            df.to_csv(ATT_FILE, index=False)
 
-        # ✅ 6. Save
-        df.loc[len(df)] = [
-            "QR-STUDENT",
-            roll,
-            name,
-            att_date,
-            "Present",
-            device_id,
-            query["token"]
-        ]
+            st.success("✅ Attendance Marked Successfully")
+            st.toast("🎉 Attendance Saved")
 
-        df.to_csv(ATT_FILE, index=False)
-
-        st.success("✅ Attendance Marked Successfully")
-        st.toast("✅ Attendance Marked", icon="🎉")
-
-        # 🔥 IMPORTANT (lock UI)
-        st.session_state.submitted = True
-     st.markdown("""
-
-        # Reset session (important)
-     
-     st.session_state.validated = False
+            st.session_state.submitted = True
 
     st.markdown('</div>', unsafe_allow_html=True)
+        # 🔥 IMPORTANT (lock UI)
 
 
 
@@ -1166,7 +1133,7 @@ st.markdown("""
 AI + Digital Management System for Teachers
 </p>
 </div>
-"", unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 
 # -------- QR ROUTING --------
